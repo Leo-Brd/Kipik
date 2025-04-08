@@ -1,75 +1,32 @@
-console.log("Kipik est actif sur cette page!");
+console.log("[Kipik] content.js actif !");
 
-// Fonction pour détecter la stack utilisée
-function detectStack() {
-  const stack = [];
+let detectedStack = [];
 
-  // FRAMEWORK STACKS
-  // React
-  if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined') {
-    stack.push('React');
+// Étape 1 : Injection du script détecteur dans la page
+const script = document.createElement('script');
+script.src = chrome.runtime.getURL('detect-stack.js');
+script.onload = function() {
+  this.remove(); // Nettoyage propre après exécution
+};
+(document.head || document.documentElement).appendChild(script);
+
+// Étape 2 : Ecoute des messages venant de detect-stack.js
+window.addEventListener('message', (event) => {
+  if (event.source !== window) return; // On ignore les events externes
+  if (event.data.type && event.data.type === 'STACK_DETECTED') {
+    detectedStack = event.data.stack;
+    console.log("[Kipik] Stack détectée:", detectedStack);
   }
+});
 
-  // Vue.js
-  if (typeof window.Vue !== 'undefined') {
-    stack.push('Vue.js');
-  }
-
-  // Angular
-  if (typeof window.angular !== 'undefined') {
-    stack.push('Angular');
-  }
-
-  // Svelte
-  if (typeof window.Svelte !== 'undefined') {
-    stack.push('Svelte');
-  }
-
-  // Ember.js
-  if (typeof window.Ember !== 'undefined') {
-    stack.push('Ember.js');
-  }
-
-  // CMS STACKS
-  // WordPress
-  if (typeof window.wp !== 'undefined') {
-    stack.push('WordPress');
-  }
-
-  // Shopify
-  if (typeof window.Shopify !== 'undefined') {
-    stack.push('Shopify');
-  }
-
-  // FRAMEWORKS CSS STACKS
-  // Bootstrap
-  if (typeof window.bootstrap !== 'undefined') {
-    stack.push('Bootstrap');
-  }
-
-  // SERVER SIDE FRAMEWORKS STACKS
-  // Next.js
-  if (typeof window.__NEXT_DATA__ !== 'undefined' && window.__NEXT_DATA__.props) {
-    stack.push('Next.js');
-  }
-
-  // Nuxt.js
-  if (typeof window.__NUXT__ !== 'undefined' && window.__NUXT__.state) {
-    stack.push('Nuxt.js');
-  }
-  
-  return stack.length > 0 ? stack : ['Aucune stack détectée'];
-}
-
-// Quand on reçoit un message depuis la popup
+// Étape 3 : Réponse aux messages venant de la popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "GET_PAGE_INFO") {
     const pageInfo = {
       title: document.title,
       url: window.location.href,
-      stack: detectStack()
+      stack: detectedStack.length ? detectedStack : ["Aucune stack détectée"]
     };
-
     sendResponse(pageInfo);
   }
 });

@@ -14,7 +14,7 @@ body {
 
 .container {
   width: 380px;
-  min-height: 400px; /* Forcer une hauteur minimale pour l'extension */
+  min-height: 400px;
   background-color: $card-background;
   padding: 30px;
   border-radius: $border-radius;
@@ -22,7 +22,6 @@ body {
   text-align: center;
   transition: box-shadow 0.3s ease;
   
-  /* Assurez-vous que l'extension s'adapte à son contenu */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
