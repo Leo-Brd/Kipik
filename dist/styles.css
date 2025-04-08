@@ -1,0 +1,101 @@
+body {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #0d1117;
+  color: #c9d1d9;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 380px;
+  background-color: #161b22;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+}
+.container:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.header .logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+.header .logo:hover {
+  transform: scale(1.1);
+}
+.header h1 {
+  font-size: 2rem;
+  color: #c9d1d9;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.site-info {
+  padding: 20px;
+  background-color: #21262d;
+  border-radius: 12px;
+  color: #c9d1d9;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
+}
+.site-info:hover {
+  background-color: rgba(88, 166, 255, 0.1);
+}
+.site-info a {
+  color: #58a6ff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.site-info a:hover {
+  text-decoration: underline;
+  color: rgb(139, 193.1796407186, 255);
+}
+.site-info p {
+  margin: 15px 0;
+  color: #8b949e;
+  font-size: 1rem;
+}
+.site-info strong {
+  color: #58a6ff;
+  font-weight: 700;
+}
+
+button {
+  background-color: #58a6ff;
+  color: #0d1117;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: rgb(113.5, 179.5898203593, 255);
+}
+button:focus {
+  outline: none;
+}
+
+/*# sourceMappingURL=styles.css.map */

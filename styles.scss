@@ -1,0 +1,118 @@
+// Assurez-vous que le body occupe toute la hauteur de la fenêtre
+body {
+  font-family: $font-family;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* 100% de la hauteur de la fenêtre */
+  background-color: $background-color;
+  color: $text-color;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 380px;
+  min-height: 400px; /* Forcer une hauteur minimale pour l'extension */
+  background-color: $card-background;
+  padding: 30px;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+  
+  /* Assurez-vous que l'extension s'adapte à son contenu */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  
+  &:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+h1 {
+  font-size: 2rem;
+  color: $text-color;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.site-info {
+  padding: 20px;
+  background-color: #21262d;
+  border-radius: $border-radius;
+  color: $text-color;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: $hover-color;
+  }
+
+  a {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    &:hover {
+      text-decoration: underline;
+      color: color.scale($primary-color, $lightness: 15.2694610778%);
+    }
+  }
+
+  p {
+    margin: 15px 0;
+    color: $secondary-color;
+    font-size: 1rem;
+  }
+
+  strong {
+    color: $primary-color;
+    font-weight: 700;
+  }
+}
+
+button {
+  background-color: $primary-color;
+  color: $background-color;
+  padding: 15px 25px;
+  border: none;
+  border-radius: $border-radius;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: color.scale($primary-color, $lightness: 15.2694610778%);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
