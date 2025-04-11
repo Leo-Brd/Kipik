@@ -9,6 +9,7 @@
     "128": "logo.png"
   },
   "permissions": [
+    "tabs",
     "activeTab",
     "scripting",
     "storage"
@@ -18,7 +19,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["detect-stack.js"],
+      "resources": ["detectors/detect-stack.js", "detectors/detect-performance.js"],
       "matches": ["<all_urls>"]
     }
   ],
