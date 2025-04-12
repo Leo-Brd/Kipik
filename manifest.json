@@ -19,7 +19,11 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["detectors/detect-stack.js", "detectors/detect-performance.js"],
+      "resources": [
+        "detectors/detect-stack.js",
+        "detectors/detect-performance.js",
+        "detectors/detect-content.js"
+      ],
       "matches": ["<all_urls>"]
     }
   ],
