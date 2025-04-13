@@ -4,9 +4,9 @@
   "version": "1.0",
   "description": "Kipik analyse les sites web et révèle leur stack et infos cachées.",
   "icons": {
-    "16": "logo.png",
-    "48": "logo.png",
-    "128": "logo.png"
+    "16": "assets/logo.png",
+    "48": "assets/logo.png",
+    "128": "assets/logo.png"
   },
   "permissions": [
     "tabs",
@@ -25,7 +25,7 @@
         "detectors/detect-content.js",
         "detectors/detect-advanced.js",
         "dist/styles.css",
-        "logo.png"
+        "assets/logo.png"
       ],
       "matches": ["<all_urls>"]
     }
@@ -33,9 +33,9 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "logo.png",
-      "48": "logo.png",
-      "128": "logo.png"
+      "16": "assets/logo.png",
+      "48": "assets/logo.png",
+      "128": "assets/logo.png"
     }
   },
   "background": {

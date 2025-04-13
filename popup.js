@@ -1,13 +1,19 @@
 document.getElementById('loadButton').addEventListener('click', async () => {
+    const button = document.getElementById('loadButton');
+    button.disabled = true;
+    button.innerHTML = '<span class="button-icon">⏳</span> Analyse en cours...';
+
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
     chrome.tabs.sendMessage(tab.id, { type: "GET_PAGE_INFO" }, (response) => {
         if (chrome.runtime.lastError) {
             document.getElementById('siteInfo').innerHTML = `
                 <div class="error">
-                    Erreur: ${chrome.runtime.lastError.message}
+                    <strong>Erreur:</strong> ${chrome.runtime.lastError.message}
                 </div>
             `;
+            button.disabled = false;
+            button.innerHTML = '<span class="button-icon">🔍</span> Réessayer';
             return;
         }
 
@@ -72,11 +78,6 @@ document.getElementById('loadButton').addEventListener('click', async () => {
             </div>
 
             <div class="info-section">
-                <h2>Formulaires</h2>
-                <p><strong>Nombre de formulaires:</strong> ${advanced.forms.length}</p>
-            </div>
-
-            <div class="info-section">
                 <h2>Liens</h2>
                 <p><strong>Liens internes:</strong> ${advanced.links.internal.length}</p>
                 <p><strong>Liens externes:</strong> ${advanced.links.external.length}</p>
@@ -84,5 +85,7 @@ document.getElementById('loadButton').addEventListener('click', async () => {
         `;
 
         document.getElementById('siteInfo').innerHTML = html;
+        button.disabled = false;
+        button.innerHTML = '<span class="button-icon">🔄</span> Analyser à nouveau';
     });
 });

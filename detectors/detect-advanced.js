@@ -5,10 +5,16 @@
         const videos = [];
         const images = [];
 
-        // Détection des images
+        // Détection des images (y compris lazy loading)
         document.querySelectorAll('img').forEach(img => {
             try {
-                const src = img.src || img.dataset.src;
+                // Vérifie les différentes sources possibles pour le lazy loading
+                const src = img.src || 
+                           img.dataset.src || 
+                           img.getAttribute('data-src') ||
+                           img.getAttribute('data-lazy-src') ||
+                           img.getAttribute('data-original');
+                
                 if (src) {
                     images.push(src);
                 }
@@ -17,12 +23,20 @@
             }
         });
 
-        // Détection des vidéos
+        // Détection des vidéos (y compris lazy loading)
         document.querySelectorAll('video').forEach(video => {
             try {
+                // Vérifie la source principale
                 if (video.src) {
                     videos.push(video.src);
                 }
+                
+                // Vérifie les sources dans les balises source (pour le lazy loading)
+                video.querySelectorAll('source').forEach(source => {
+                    if (source.src) {
+                        videos.push(source.src);
+                    }
+                });
             } catch (error) {
                 console.error("[Kipik] Erreur lors de la détection d'une vidéo:", error);
             }
@@ -34,7 +48,12 @@
                 // Images
                 root.querySelectorAll('img').forEach(img => {
                     try {
-                        const src = img.src || img.dataset.src;
+                        const src = img.src || 
+                                   img.dataset.src || 
+                                   img.getAttribute('data-src') ||
+                                   img.getAttribute('data-lazy-src') ||
+                                   img.getAttribute('data-original');
+                        
                         if (src) {
                             images.push(src);
                         }
@@ -49,6 +68,12 @@
                         if (video.src) {
                             videos.push(video.src);
                         }
+                        
+                        video.querySelectorAll('source').forEach(source => {
+                            if (source.src) {
+                                videos.push(source.src);
+                            }
+                        });
                     } catch (error) {
                         console.error("[Kipik] Erreur lors de la détection d'une vidéo dans le shadow DOM:", error);
                     }
@@ -126,30 +151,6 @@
         return resources;
     }
 
-    function detectForms() {
-        const forms = [];
-        
-        document.querySelectorAll('form').forEach(form => {
-            const formData = {
-                action: form.action,
-                method: form.method,
-                inputs: []
-            };
-            
-            form.querySelectorAll('input, select, textarea').forEach(input => {
-                formData.inputs.push({
-                    type: input.type,
-                    name: input.name,
-                    required: input.required
-                });
-            });
-            
-            forms.push(formData);
-        });
-        
-        return forms;
-    }
-
     function detectLinks() {
         const links = {
             internal: [],
@@ -175,7 +176,6 @@
             metaTags: detectMetaTags(),
             storage: detectStorage(),
             resources: detectResources(),
-            forms: detectForms(),
             links: detectLinks()
         };
 
@@ -190,7 +190,6 @@
                 metaTags: {},
                 storage: { cookies: [], localStorage: [], sessionStorage: [] },
                 resources: { scripts: [], styles: [], externalScripts: [], externalStyles: [] },
-                forms: [],
                 links: { internal: [], external: [], broken: [] }
             }
         }, '*');

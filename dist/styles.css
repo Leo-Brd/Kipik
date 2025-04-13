@@ -1,115 +1,157 @@
 @charset "UTF-8";
-body#kipik-popup {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body#kipik-popup {
   width: 500px;
   min-width: 500px;
   max-width: 500px;
   margin: 0;
-  padding: 15px;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background-color: #f9f9f9;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background-color: #ffffff;
+  color: #2c3e50;
   overflow-x: hidden;
 }
 
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
 .header {
+  background: linear-gradient(135deg, #4a6bff, rgb(23, 65.2983425414, 255));
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+.header .header-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #ddd;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
 }
 .header .logo {
-  width: 32px;
-  height: 32px;
-  margin-right: 10px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
 }
-.header h1 {
+.header .subtitle {
+  font-size: 0.9rem;
+  opacity: 0.9;
   margin: 0;
-  color: #333;
-  font-size: 24px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.analyze-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.8rem 1.5rem;
+  background-color: #4a6bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+.analyze-button:hover {
+  background-color: rgb(23, 65.2983425414, 255);
+  transform: translateY(-1px);
+}
+.analyze-button:active {
+  transform: translateY(0);
+}
+.analyze-button .button-icon {
+  font-size: 1.2rem;
+}
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 .info-section {
-  background: white;
-  border: 1px solid #ddd;
+  background-color: white;
   border-radius: 8px;
+  padding: 1.2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
-  padding: 15px;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
+  width: 100%;
 }
 .info-section:hover {
   transform: translateY(-2px);
 }
 .info-section h2 {
-  margin-top: 0;
-  color: #4CAF50;
-  font-size: 18px;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 8px;
-  margin-bottom: 12px;
+  color: #4a6bff;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
 }
 .info-section p {
-  margin: 8px 0;
-  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+.info-section p strong {
+  color: #6c757d;
+  font-weight: 500;
 }
 .info-section ul {
-  margin: 8px 0;
-  padding-left: 20px;
-  list-style-type: none;
+  list-style: none;
+  margin-left: 1rem;
 }
 .info-section ul li {
-  margin: 4px 0;
-  padding-left: 20px;
+  margin-bottom: 0.3rem;
+  padding-left: 1rem;
   position: relative;
 }
 .info-section ul li::before {
   content: "•";
-  color: #4CAF50;
+  color: #4a6bff;
   position: absolute;
   left: 0;
 }
 
-button {
+.footer {
+  background-color: #ffffff;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #6c757d;
+  border-top: 1px solid #e9ecef;
   width: 100%;
-  padding: 12px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-  margin-bottom: 20px;
-}
-button:hover {
-  background-color: #45a049;
-}
-button:active {
-  transform: scale(0.98);
 }
 
 .error {
-  background: white;
-  border: 1px solid #ddd;
+  background-color: rgb(250.1265822785, 226.8734177215, 229.1012658228);
+  color: #dc3545;
+  padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: #ff4444;
-  padding: 15px;
-  margin: 10px 0;
-  border-color: #ff4444;
-  background-color: rgba(255, 68, 68, 0.05);
-}
-
-@media (max-width: 400px) {
-  body {
-    width: 100%;
-    padding: 10px;
-  }
-  .info-section {
-    padding: 10px;
-  }
+  margin: 1rem 0;
+  border-left: 4px solid #dc3545;
+  width: 100%;
 }
 
 /*# sourceMappingURL=styles.css.map */

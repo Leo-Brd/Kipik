@@ -7,13 +7,29 @@
     <link rel="stylesheet" href="dist/styles.css">
 </head>
 <body id="kipik-popup">
-    <header class="header">
-        <img src="logo.png" alt="Logo de Kipik" class="logo"/>
-        <h1>Kipik</h1>
-    </header>
+    <div class="popup-container">
+        <header class="header">
+            <div class="header-content">
+                <img src="assets/logo.png" alt="Logo de Kipik" class="logo"/>
+            </div>
+            <p class="subtitle">Analyseur de sites web</p>
+        </header>
 
-    <button id="loadButton">Analyser la page</button>
-    <div id="siteInfo"></div>
+        <main class="main-content">
+            <button id="loadButton" class="analyze-button">
+                <span class="button-icon">🔍</span>
+                Analyser la page
+            </button>
+
+            <div id="siteInfo" class="info-container">
+                <!-- Le contenu sera injecté ici par JavaScript -->
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Kipik v1.0.0</p>
+        </footer>
+    </div>
     <script src="popup.js"></script>
 </body>
 </html>
