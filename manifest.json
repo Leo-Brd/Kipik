@@ -22,7 +22,10 @@
       "resources": [
         "detectors/detect-stack.js",
         "detectors/detect-performance.js",
-        "detectors/detect-content.js"
+        "detectors/detect-content.js",
+        "detectors/detect-advanced.js",
+        "dist/styles.css",
+        "logo.png"
       ],
       "matches": ["<all_urls>"]
     }

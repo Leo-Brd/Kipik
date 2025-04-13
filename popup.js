@@ -1,51 +1,88 @@
-document.getElementById("loadButton").addEventListener("click", () => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { type: "GET_PAGE_INFO" }, (response) => {
-      if (chrome.runtime.lastError) {
-        document.getElementById("site-info").innerHTML = "<p>Impossible d'obtenir les infos.</p>";
-        return;
-      }
+document.getElementById('loadButton').addEventListener('click', async () => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+    chrome.tabs.sendMessage(tab.id, { type: "GET_PAGE_INFO" }, (response) => {
+        if (chrome.runtime.lastError) {
+            document.getElementById('siteInfo').innerHTML = `
+                <div class="error">
+                    Erreur: ${chrome.runtime.lastError.message}
+                </div>
+            `;
+            return;
+        }
 
-      if (response) {
-        const { title, url, stack, performance, content } = response;
-        const siteInfoElement = document.getElementById("site-info");
+        const { title, url, stack, performance, content, advanced } = response;
+        
+        let html = `
+            <div class="info-section">
+                <h2>Informations de base</h2>
+                <p><strong>Titre:</strong> ${title}</p>
+                <p><strong>URL:</strong> ${url}</p>
+                <p><strong>Langue:</strong> ${content.language}</p>
+            </div>
 
-        siteInfoElement.innerHTML = `
-          <div class="info-block">
-            <h2>Informations de base</h2>
-            <p><strong>Titre :</strong> ${title}</p>
-            <p><strong>URL :</strong> <a href="${url}" target="_blank">${url}</a></p>
-            <p><strong>Langue :</strong> ${content.language.toUpperCase()}</p>
-          </div>
+            <div class="info-section">
+                <h2>Stack technique</h2>
+                <ul>
+                    ${stack.map(tech => `<li>${tech}</li>`).join('')}
+                </ul>
+            </div>
 
-          <div class="info-block">
-            <h2>Stack technique</h2>
-            <ul>
-              ${stack.map(tech => `<li>${tech}</li>`).join('')}
-            </ul>
-          </div>
+            <div class="info-section">
+                <h2>Performance</h2>
+                <p><strong>Temps de chargement:</strong> ${performance.loadTime}ms</p>
+                <p><strong>DOM Content Loaded:</strong> ${performance.domContentLoaded}ms</p>
+                <p><strong>Nombre de ressources:</strong> ${performance.resourceCount}</p>
+                <p><strong>Taille totale:</strong> ${performance.totalResourceSizeKB}KB</p>
+            </div>
 
-          <div class="info-block">
-            <h2>Performance</h2>
-            <ul>
-              <li><strong>Temps de chargement :</strong> ${performance.loadTime} ms</li>
-              <li><strong>DOM Content Loaded :</strong> ${performance.domContentLoaded} ms</li>
-              <li><strong>Nombre de ressources :</strong> ${performance.resourceCount}</li>
-              <li><strong>Taille totale :</strong> ${performance.totalResourceSizeKB} Ko</li>
-            </ul>
-          </div>
+            <div class="info-section">
+                <h2>Polices utilisées</h2>
+                <ul>
+                    ${content.fonts.map(font => `<li>${font}</li>`).join('')}
+                </ul>
+            </div>
 
-          <div class="info-block">
-            <h2>Polices utilisées</h2>
-            <ul>
-              ${content.fonts.length > 0 
-                ? content.fonts.map(font => `<li>${font}</li>`).join('')
-                : '<li>Aucune police personnalisée détectée</li>'
-              }
-            </ul>
-          </div>
+            <div class="info-section">
+                <h2>Médias</h2>
+                <p><strong>Images:</strong> ${advanced.media.images.length}</p>
+                <p><strong>Vidéos:</strong> ${advanced.media.videos.length}</p>
+            </div>
+
+            <div class="info-section">
+                <h2>Meta Tags</h2>
+                <p><strong>Description:</strong> ${advanced.metaTags.description || 'Non définie'}</p>
+                <p><strong>Mots-clés:</strong> ${advanced.metaTags.keywords || 'Non définis'}</p>
+                <p><strong>Viewport:</strong> ${advanced.metaTags.viewport || 'Non défini'}</p>
+            </div>
+
+            <div class="info-section">
+                <h2>Stockage</h2>
+                <p><strong>Cookies:</strong> ${advanced.storage.cookies.length}</p>
+                <p><strong>Local Storage:</strong> ${advanced.storage.localStorage.length}</p>
+                <p><strong>Session Storage:</strong> ${advanced.storage.sessionStorage.length}</p>
+            </div>
+
+            <div class="info-section">
+                <h2>Ressources</h2>
+                <p><strong>Scripts internes:</strong> ${advanced.resources.scripts.length}</p>
+                <p><strong>Scripts externes:</strong> ${advanced.resources.externalScripts.length}</p>
+                <p><strong>Styles internes:</strong> ${advanced.resources.styles.length}</p>
+                <p><strong>Styles externes:</strong> ${advanced.resources.externalStyles.length}</p>
+            </div>
+
+            <div class="info-section">
+                <h2>Formulaires</h2>
+                <p><strong>Nombre de formulaires:</strong> ${advanced.forms.length}</p>
+            </div>
+
+            <div class="info-section">
+                <h2>Liens</h2>
+                <p><strong>Liens internes:</strong> ${advanced.links.internal.length}</p>
+                <p><strong>Liens externes:</strong> ${advanced.links.external.length}</p>
+            </div>
         `;
-      }
+
+        document.getElementById('siteInfo').innerHTML = html;
     });
-  });
 });
