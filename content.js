@@ -2,8 +2,13 @@ console.log("[Kipik] content.js actif !");
 
 let detectedStack = [];
 let performanceData = {};
+let contentData = {
+    language: "unknown",
+    fonts: []
+};
 let stackDetected = false;
 let performanceDetected = false;
+let contentDetected = true;
 
 // STACK DETECTOR INJECTION
 console.log("[Kipik] Tentative d'injection du détecteur de stack...");
@@ -31,6 +36,24 @@ perfScript.onerror = function(error) {
 };
 (document.head || document.documentElement).appendChild(perfScript);
 
+// CONTENT DETECTOR INJECTION
+console.log("[Kipik] Tentative d'injection du détecteur de contenu...");
+const contentScript = document.createElement('script');
+contentScript.src = chrome.runtime.getURL('detectors/detect-content.js');
+contentScript.onload = function() {
+  console.log("[Kipik] Détecteur de contenu injecté avec succès");
+  this.remove();
+};
+contentScript.onerror = function(error) {
+  console.error("[Kipik] Erreur lors de l'injection du détecteur de contenu:", error);
+  contentData = {
+    language: "unknown",
+    fonts: []
+  };
+  contentDetected = true;
+};
+(document.head || document.documentElement).appendChild(contentScript);
+
 // DETECTORS LISTENING
 console.log("[Kipik] Configuration des écouteurs d'événements...");
 window.addEventListener('message', (event) => {
@@ -49,6 +72,17 @@ window.addEventListener('message', (event) => {
     performanceDetected = true;
     console.log("[Kipik] Données de performance récupérées:", performanceData);
   }
+
+  if (event.data.type === 'CONTENT_DATA') {
+    if (event.data.data && typeof event.data.data === 'object') {
+      contentData = {
+        language: event.data.data.language || "unknown",
+        fonts: Array.isArray(event.data.data.fonts) ? event.data.data.fonts : []
+      };
+    }
+    contentDetected = true;
+    console.log("[Kipik] Données de contenu récupérées:", contentData);
+  }
 });
 
 // WE SEND ALL THE INFOS TO THE POPUP
@@ -56,20 +90,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("[Kipik] Message reçu du popup:", message);
   
   if (message.type === "GET_PAGE_INFO") {
-    console.log("[Kipik] État des détections - Stack:", stackDetected, "Performance:", performanceDetected);
+    console.log("[Kipik] État des détections - Stack:", stackDetected, "Performance:", performanceDetected, "Content:", contentDetected);
     
-    // Attendre que les deux détecteurs aient terminé
+    // Attendre que les détecteurs essentiels aient terminé
     const checkData = setInterval(() => {
       console.log("[Kipik] Vérification des données - Stack:", stackDetected, "Performance:", performanceDetected);
       
       if (stackDetected && performanceDetected) {
-        console.log("[Kipik] Toutes les données sont disponibles, envoi de la réponse...");
+        console.log("[Kipik] Données essentielles disponibles, envoi de la réponse...");
         clearInterval(checkData);
         const pageInfo = {
           title: document.title,
           url: window.location.href,
           stack: detectedStack.length ? detectedStack : ["Aucune stack détectée"],
-          performance: performanceData || { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 }
+          performance: performanceData || { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 },
+          content: contentData
         };
         console.log("[Kipik] Données envoyées:", pageInfo);
         sendResponse(pageInfo);
@@ -85,14 +120,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           title: document.title,
           url: window.location.href,
           stack: ["Impossible de détecter la stack"],
-          performance: { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 }
+          performance: { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 },
+          content: contentData
         };
         console.log("[Kipik] Envoi de la réponse de secours:", fallbackResponse);
         sendResponse(fallbackResponse);
       }
     }, 5000);
 
-    return true; // Important pour garder le canal de communication ouvert
+    return true;
   }
 });
 
