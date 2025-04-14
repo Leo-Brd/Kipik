@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:styles": "sass styles.scss dist/styles.css --style compressed",
-    "watch:styles": "sass --watch styles.scss:dist/styles.css"
+    "watch:styles": "sass --watch styles.scss:dist/styles.css",
+    "build:css": "sass styles.scss dist/styles.css --watch"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,10 @@
   "homepage": "https://github.com/Leo-Brd/Kipik#readme",
   "devDependencies": {
     "sass": "^1.86.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2"
   }
 }

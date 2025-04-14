@@ -4,14 +4,19 @@ let detectedStack = [];
 let performanceData = {};
 let contentData = {
     language: "unknown",
-    fonts: []
+    fonts: [],
+    images: [],
+    videos: []
 };
 let advancedData = {
-    media: { images: [], videos: [], audios: [] },
-    metaTags: {},
+    metaTags: {
+        description: "",
+        keywords: "",
+        viewport: "",
+        robots: "",
+        og: {}
+    },
     storage: { cookies: [], localStorage: [], sessionStorage: [] },
-    resources: { scripts: [], styles: [], externalScripts: [], externalStyles: [] },
-    forms: [],
     links: { internal: [], external: [], broken: [] }
 };
 let stackDetected = false;
@@ -57,7 +62,9 @@ contentScript.onerror = function(error) {
   console.error("[Kipik] Erreur lors de l'injection du détecteur de contenu:", error);
   contentData = {
     language: "unknown",
-    fonts: []
+    fonts: [],
+    images: [],
+    videos: []
   };
   contentDetected = true;
 };
@@ -74,11 +81,14 @@ advancedScript.onload = function() {
 advancedScript.onerror = function(error) {
   console.error("[Kipik] Erreur lors de l'injection du détecteur avancé:", error);
   advancedData = {
-    media: { images: [], videos: [], audios: [] },
-    metaTags: {},
+    metaTags: {
+      description: "",
+      keywords: "",
+      viewport: "",
+      robots: "",
+      og: {}
+    },
     storage: { cookies: [], localStorage: [], sessionStorage: [] },
-    resources: { scripts: [], styles: [], externalScripts: [], externalStyles: [] },
-    forms: [],
     links: { internal: [], external: [], broken: [] }
   };
   advancedDetected = true;
@@ -108,7 +118,9 @@ window.addEventListener('message', (event) => {
     if (event.data.data && typeof event.data.data === 'object') {
       contentData = {
         language: event.data.data.language || "unknown",
-        fonts: Array.isArray(event.data.data.fonts) ? event.data.data.fonts : []
+        fonts: Array.isArray(event.data.data.fonts) ? event.data.data.fonts : [],
+        images: Array.isArray(event.data.data.images) ? event.data.data.images : [],
+        videos: Array.isArray(event.data.data.videos) ? event.data.data.videos : []
       };
     }
     contentDetected = true;
@@ -117,59 +129,69 @@ window.addEventListener('message', (event) => {
 
   if (event.data.type === 'ADVANCED_DATA') {
     if (event.data.data && typeof event.data.data === 'object') {
-      advancedData = event.data.data;
+      advancedData = {
+        metaTags: {
+          description: event.data.data.metaTags?.description || "",
+          keywords: event.data.data.metaTags?.keywords || "",
+          viewport: event.data.data.metaTags?.viewport || "",
+          robots: event.data.data.metaTags?.robots || "",
+          og: event.data.data.metaTags?.og || {}
+        },
+        storage: event.data.data.storage || { cookies: [], localStorage: [], sessionStorage: [] },
+        links: event.data.data.links || { internal: [], external: [], broken: [] }
+      };
     }
     advancedDetected = true;
     console.log("[Kipik] Données avancées récupérées:", advancedData);
   }
 });
 
-// WE SEND ALL THE INFOS TO THE POPUP
+// Gestionnaire de messages du popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("[Kipik] Message reçu du popup:", message);
-  
-  if (message.type === "GET_PAGE_INFO") {
-    console.log("[Kipik] État des détections - Stack:", stackDetected, "Performance:", performanceDetected, "Content:", contentDetected, "Advanced:", advancedDetected);
+    console.log("[Kipik] Message reçu du popup:", message);
     
-    // Attendre que les détecteurs essentiels aient terminé
-    const checkData = setInterval(() => {
-      console.log("[Kipik] Vérification des données - Stack:", stackDetected, "Performance:", performanceDetected);
-      
-      if (stackDetected && performanceDetected) {
-        console.log("[Kipik] Données essentielles disponibles, envoi de la réponse...");
-        clearInterval(checkData);
-        const pageInfo = {
-          title: document.title,
-          url: window.location.href,
-          stack: detectedStack.length ? detectedStack : ["Aucune stack détectée"],
-          performance: performanceData || { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 },
-          content: contentData,
-          advanced: advancedData
-        };
-        console.log("[Kipik] Données envoyées:", pageInfo);
-        sendResponse(pageInfo);
-      }
-    }, 100);
+    if (message.type === "GET_PAGE_INFO") {
+        console.log("[Kipik] État des détections - Stack:", stackDetected, "Performance:", performanceDetected, "Content:", contentDetected, "Advanced:", advancedDetected);
+        
+        // Attendre que les détecteurs essentiels aient terminé
+        const checkData = setInterval(() => {
+            console.log("[Kipik] Vérification des données - Stack:", stackDetected, "Performance:", performanceDetected);
+            
+            if (stackDetected && performanceDetected) {
+                console.log("[Kipik] Données essentielles disponibles, envoi de la réponse...");
+                clearInterval(checkData);
+                const pageInfo = {
+                    title: document.title,
+                    url: window.location.href,
+                    stack: detectedStack.length ? detectedStack : ["Aucune stack détectée"],
+                    performance: performanceData || { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 },
+                    content: contentData,
+                    advanced: advancedData
+                };
+                console.log("[Kipik] Données envoyées:", pageInfo);
+                sendResponse(pageInfo);
+            }
+        }, 100);
 
-    // Timeout après 5 secondes
-    setTimeout(() => {
-      console.log("[Kipik] Timeout atteint, état final - Stack:", stackDetected, "Performance:", performanceDetected);
-      clearInterval(checkData);
-      if (!stackDetected || !performanceDetected) {
-        const fallbackResponse = {
-          title: document.title,
-          url: window.location.href,
-          stack: ["Impossible de détecter la stack"],
-          performance: { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 },
-          content: contentData,
-          advanced: advancedData
-        };
-        console.log("[Kipik] Envoi de la réponse de secours:", fallbackResponse);
-        sendResponse(fallbackResponse);
-      }
-    }, 5000);
+        // Timeout après 5 secondes
+        setTimeout(() => {
+            console.log("[Kipik] Timeout atteint, état final - Stack:", stackDetected, "Performance:", performanceDetected);
+            clearInterval(checkData);
+            if (!stackDetected || !performanceDetected) {
+                const fallbackResponse = {
+                    title: document.title,
+                    url: window.location.href,
+                    stack: ["Impossible de détecter la stack"],
+                    performance: { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 },
+                    content: contentData,
+                    advanced: advancedData
+                };
+                console.log("[Kipik] Envoi de la réponse de secours:", fallbackResponse);
+                sendResponse(fallbackResponse);
+            }
+        }, 5000);
 
-    return true;
-  }
+        return true; // Indique que la réponse sera envoyée de manière asynchrone
+    }
 });
 

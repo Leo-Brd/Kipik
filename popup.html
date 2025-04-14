@@ -14,12 +14,36 @@
             </div>
             <p class="subtitle">Analyseur de sites web</p>
         </header>
-
+        
         <main class="main-content">
             <button id="loadButton" class="analyze-button">
                 <span class="button-icon">🔍</span>
                 Analyser la page
             </button>
+
+            <button id="analyzePageSpeed" class="analyze-button">
+                <span class="button-icon">📊</span>
+                Analyser avec PageSpeed
+            </button>
+
+            <div id="pageSpeedResults" class="results" style="display: none;">
+                <div class="score-card">
+                    <h3>Performance</h3>
+                    <div class="score" id="performanceScore">-</div>
+                </div>
+                <div class="score-card">
+                    <h3>Accessibilité</h3>
+                    <div class="score" id="accessibilityScore">-</div>
+                </div>
+                <div class="score-card">
+                    <h3>SEO</h3>
+                    <div class="score" id="seoScore">-</div>
+                </div>
+                <div class="score-card">
+                    <h3>Bonnes pratiques</h3>
+                    <div class="score" id="bestPracticesScore">-</div>
+                </div>
+            </div>
 
             <div id="siteInfo" class="info-container">
                 <!-- Le contenu sera injecté ici par JavaScript -->

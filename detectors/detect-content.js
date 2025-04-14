@@ -90,10 +90,55 @@
         }
     }
 
+    function detectMedia() {
+        try {
+            const images = [];
+            const videos = [];
+
+            // Détecter les images
+            document.querySelectorAll('img').forEach(img => {
+                const src = img.src || img.dataset.src || img.getAttribute('data-src');
+                if (src) {
+                    images.push(src);
+                }
+            });
+
+            // Détecter les vidéos
+            document.querySelectorAll('video').forEach(video => {
+                const src = video.src || video.querySelector('source')?.src;
+                if (src) {
+                    videos.push(src);
+                }
+            });
+
+            // Détecter les iframes vidéo
+            document.querySelectorAll('iframe').forEach(iframe => {
+                const src = iframe.src;
+                if (src && (
+                    src.includes('youtube.com') ||
+                    src.includes('vimeo.com') ||
+                    src.includes('dailymotion.com') ||
+                    src.includes('twitch.tv')
+                )) {
+                    videos.push(src);
+                }
+            });
+
+            console.log("[Kipik] Médias détectés:", { images, videos });
+            return { images, videos };
+        } catch (error) {
+            console.error("[Kipik] Erreur lors de la détection des médias:", error);
+            return { images: [], videos: [] };
+        }
+    }
+
     try {
+        const mediaData = detectMedia();
         const contentData = {
             language: detectLanguage(),
-            fonts: detectFonts()
+            fonts: detectFonts(),
+            images: mediaData.images,
+            videos: mediaData.videos
         };
 
         console.log("[Kipik] Données de contenu complètes:", contentData);
@@ -102,7 +147,12 @@
         console.error("[Kipik] Erreur générale du détecteur de contenu:", error);
         window.postMessage({ 
             type: 'CONTENT_DATA', 
-            data: { language: "unknown", fonts: [] } 
+            data: { 
+                language: "unknown", 
+                fonts: [],
+                images: [],
+                videos: []
+            } 
         }, '*');
     }
 })(); 

@@ -154,4 +154,51 @@ html, body#kipik-popup {
   width: 100%;
 }
 
+.btn-primary {
+  background-color: #2563EB;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.btn-primary:hover {
+  background-color: #1D4ED8;
+}
+.btn-primary:disabled {
+  background-color: #93C5FD;
+  cursor: not-allowed;
+}
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.score-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+.score-card:hover {
+  transform: translateY(-2px);
+}
+.score-card h3 {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+.score-card .score {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4a6bff;
+}
+
 /*# sourceMappingURL=styles.css.map */
