@@ -1,5 +1,5 @@
 (function() {
-    console.log("[Kipik] Détecteur injecté.");
+    console.log("[Kipik] Détecteur de stack actif");
   
     function detectFrameworks() {
       const stack = [];
@@ -117,6 +117,8 @@
     }
   
     const detectedStack = detectFrameworks();
+    console.log("[Kipik] Stack détectée:", detectedStack);
+    console.log("[Kipik] Envoi des données de stack au content script");
     window.postMessage({ type: 'STACK_DETECTED', stack: detectedStack }, '*');
   })();
   

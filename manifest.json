@@ -8,6 +8,9 @@
     "48": "assets/logo.png",
     "128": "assets/logo.png"
   },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "permissions": [
     "tabs",
     "activeTab",
@@ -39,8 +42,7 @@
     }
   },
   "background": {
-    "service_worker": "background.js",
-    "type": "module"
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {

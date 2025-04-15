@@ -1,5 +1,5 @@
 (function() {
-    console.log("[Kipik] Détecteur de performances injecté.");
+    console.log("[Kipik] Détecteur de performance actif");
   
     function collectPerformanceData() {
       try {
@@ -47,6 +47,7 @@
       for (const entry of entries) {
         if (entry.entryType === 'navigation') {
           const performanceData = collectPerformanceData();
+          console.log("[Kipik] Envoi des données de performance au content script");
           window.postMessage({ type: 'PERFORMANCE_DATA', data: performanceData }, '*');
         }
       }

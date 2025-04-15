@@ -25,140 +25,87 @@ let contentDetected = true;
 let advancedDetected = true;
 
 // STACK DETECTOR INJECTION
-console.log("[Kipik] Tentative d'injection du détecteur de stack...");
 const script = document.createElement('script');
 script.src = chrome.runtime.getURL('detectors/detect-stack.js');
 script.onload = function() {
-  console.log("[Kipik] Détecteur de stack injecté avec succès");
-  this.remove();
-};
-script.onerror = function(error) {
-  console.error("[Kipik] Erreur lors de l'injection du détecteur de stack:", error);
+    this.remove();
 };
 (document.head || document.documentElement).appendChild(script);
 
 // PERF DETECTOR INJECTION
-console.log("[Kipik] Tentative d'injection du détecteur de performance...");
 const perfScript = document.createElement('script');
 perfScript.src = chrome.runtime.getURL('detectors/detect-performance.js');
 perfScript.onload = function() {
-  console.log("[Kipik] Détecteur de performance injecté avec succès");
-  this.remove();
-};
-perfScript.onerror = function(error) {
-  console.error("[Kipik] Erreur lors de l'injection du détecteur de performance:", error);
+    this.remove();
 };
 (document.head || document.documentElement).appendChild(perfScript);
 
 // CONTENT DETECTOR INJECTION
-console.log("[Kipik] Tentative d'injection du détecteur de contenu...");
 const contentScript = document.createElement('script');
 contentScript.src = chrome.runtime.getURL('detectors/detect-content.js');
 contentScript.onload = function() {
-  console.log("[Kipik] Détecteur de contenu injecté avec succès");
-  this.remove();
-};
-contentScript.onerror = function(error) {
-  console.error("[Kipik] Erreur lors de l'injection du détecteur de contenu:", error);
-  contentData = {
-    language: "unknown",
-    fonts: [],
-    images: [],
-    videos: []
-  };
-  contentDetected = true;
+    this.remove();
 };
 (document.head || document.documentElement).appendChild(contentScript);
 
 // ADVANCED DETECTOR INJECTION
-console.log("[Kipik] Tentative d'injection du détecteur avancé...");
 const advancedScript = document.createElement('script');
 advancedScript.src = chrome.runtime.getURL('detectors/detect-advanced.js');
 advancedScript.onload = function() {
-  console.log("[Kipik] Détecteur avancé injecté avec succès");
-  this.remove();
-};
-advancedScript.onerror = function(error) {
-  console.error("[Kipik] Erreur lors de l'injection du détecteur avancé:", error);
-  advancedData = {
-    metaTags: {
-      description: "",
-      keywords: "",
-      viewport: "",
-      robots: "",
-      og: {}
-    },
-    storage: { cookies: [], localStorage: [], sessionStorage: [] },
-    links: { internal: [], external: [], broken: [] }
-  };
-  advancedDetected = true;
+    this.remove();
 };
 (document.head || document.documentElement).appendChild(advancedScript);
 
 // DETECTORS LISTENING
-console.log("[Kipik] Configuration des écouteurs d'événements...");
 window.addEventListener('message', (event) => {
-  if (event.source !== window) return;
+    if (event.source !== window) return;
 
-  console.log("[Kipik] Message reçu:", event.data);
-
-  if (event.data.type === 'STACK_DETECTED') {
-    detectedStack = event.data.stack;
-    stackDetected = true;
-    console.log("[Kipik] Stack détectée:", detectedStack);
-  }
-
-  if (event.data.type === 'PERFORMANCE_DATA') {
-    performanceData = event.data.data;
-    performanceDetected = true;
-    console.log("[Kipik] Données de performance récupérées:", performanceData);
-  }
-
-  if (event.data.type === 'CONTENT_DATA') {
-    if (event.data.data && typeof event.data.data === 'object') {
-      contentData = {
-        language: event.data.data.language || "unknown",
-        fonts: Array.isArray(event.data.data.fonts) ? event.data.data.fonts : [],
-        images: Array.isArray(event.data.data.images) ? event.data.data.images : [],
-        videos: Array.isArray(event.data.data.videos) ? event.data.data.videos : []
-      };
+    if (event.data.type === 'STACK_DETECTED') {
+        detectedStack = event.data.stack;
+        stackDetected = true;
     }
-    contentDetected = true;
-    console.log("[Kipik] Données de contenu récupérées:", contentData);
-  }
 
-  if (event.data.type === 'ADVANCED_DATA') {
-    if (event.data.data && typeof event.data.data === 'object') {
-      advancedData = {
-        metaTags: {
-          description: event.data.data.metaTags?.description || "",
-          keywords: event.data.data.metaTags?.keywords || "",
-          viewport: event.data.data.metaTags?.viewport || "",
-          robots: event.data.data.metaTags?.robots || "",
-          og: event.data.data.metaTags?.og || {}
-        },
-        storage: event.data.data.storage || { cookies: [], localStorage: [], sessionStorage: [] },
-        links: event.data.data.links || { internal: [], external: [], broken: [] }
-      };
+    if (event.data.type === 'PERFORMANCE_DATA') {
+        performanceData = event.data.data;
+        performanceDetected = true;
     }
-    advancedDetected = true;
-    console.log("[Kipik] Données avancées récupérées:", advancedData);
-  }
+
+    if (event.data.type === 'CONTENT_DATA') {
+        if (event.data.data && typeof event.data.data === 'object') {
+            contentData = {
+                language: event.data.data.language || "unknown",
+                fonts: Array.isArray(event.data.data.fonts) ? event.data.data.fonts : [],
+                images: Array.isArray(event.data.data.images) ? event.data.data.images : [],
+                videos: Array.isArray(event.data.data.videos) ? event.data.data.videos : []
+            };
+        }
+        contentDetected = true;
+    }
+
+    if (event.data.type === 'ADVANCED_DATA') {
+        if (event.data.data && typeof event.data.data === 'object') {
+            advancedData = {
+                metaTags: {
+                    description: event.data.data.metaTags?.description || "",
+                    keywords: event.data.data.metaTags?.keywords || "",
+                    viewport: event.data.data.metaTags?.viewport || "",
+                    robots: event.data.data.metaTags?.robots || "",
+                    og: event.data.data.metaTags?.og || {}
+                },
+                storage: event.data.data.storage || { cookies: [], localStorage: [], sessionStorage: [] },
+                links: event.data.data.links || { internal: [], external: [], broken: [] }
+            };
+        }
+        advancedDetected = true;
+    }
 });
 
 // Gestionnaire de messages du popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("[Kipik] Message reçu du popup:", message);
-    
     if (message.type === "GET_PAGE_INFO") {
-        console.log("[Kipik] État des détections - Stack:", stackDetected, "Performance:", performanceDetected, "Content:", contentDetected, "Advanced:", advancedDetected);
-        
         // Attendre que les détecteurs essentiels aient terminé
         const checkData = setInterval(() => {
-            console.log("[Kipik] Vérification des données - Stack:", stackDetected, "Performance:", performanceDetected);
-            
             if (stackDetected && performanceDetected) {
-                console.log("[Kipik] Données essentielles disponibles, envoi de la réponse...");
                 clearInterval(checkData);
                 const pageInfo = {
                     title: document.title,
@@ -168,14 +115,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     content: contentData,
                     advanced: advancedData
                 };
-                console.log("[Kipik] Données envoyées:", pageInfo);
                 sendResponse(pageInfo);
             }
         }, 100);
 
         // Timeout après 5 secondes
         setTimeout(() => {
-            console.log("[Kipik] Timeout atteint, état final - Stack:", stackDetected, "Performance:", performanceDetected);
             clearInterval(checkData);
             if (!stackDetected || !performanceDetected) {
                 const fallbackResponse = {
@@ -186,12 +131,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     content: contentData,
                     advanced: advancedData
                 };
-                console.log("[Kipik] Envoi de la réponse de secours:", fallbackResponse);
                 sendResponse(fallbackResponse);
             }
         }, 5000);
 
-        return true; // Indique que la réponse sera envoyée de manière asynchrone
+        return true;
     }
 });
 
