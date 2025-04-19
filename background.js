@@ -39,27 +39,31 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         apiUrl.searchParams.set('url', message.url);
         apiUrl.searchParams.set('key', message.apiKey);
         apiUrl.searchParams.set('strategy', 'mobile');
-        apiUrl.searchParams.set('category', 'performance');
-        apiUrl.searchParams.set('category', 'accessibility');
-        apiUrl.searchParams.set('category', 'seo');
-        apiUrl.searchParams.set('category', 'best-practices');
+        apiUrl.searchParams.append('category', 'performance');
+        apiUrl.searchParams.append('category', 'accessibility');
+        apiUrl.searchParams.append('category', 'seo');
+        apiUrl.searchParams.append('category', 'best-practices');
         apiUrl.searchParams.set('fields', 'lighthouseResult.categories');
 
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
-                if (!data.lighthouseResult?.categories) {
+                console.log('Données brutes reçues de PageSpeed :', JSON.stringify(data, null, 2));
+                if (!data.lighthouseResult || !data.lighthouseResult.categories) {
                     throw new Error('Format de réponse invalide de l\'API PageSpeed');
                 }
 
-                const scores = {
-                    performance: Math.round((data.lighthouseResult.categories.performance?.score || 0) * 100),
-                    accessibility: Math.round((data.lighthouseResult.categories.accessibility?.score || 0) * 100),
-                    seo: Math.round((data.lighthouseResult.categories.seo?.score || 0) * 100),
-                    bestPractices: Math.round((data.lighthouseResult.categories['best-practices']?.score || 0) * 100)
-                };
+                const performance = Math.round((data.lighthouseResult.categories.performance?.score || 0) * 100);
+                const accessibility = Math.round((data.lighthouseResult.categories.accessibility?.score || 0) * 100);
+                const seo = Math.round((data.lighthouseResult.categories.seo?.score || 0) * 100);
+                const bestPractices = Math.round((data.lighthouseResult.categories['best-practices']?.score || 0) * 100);
 
-                sendResponse(scores);
+                sendResponse({
+                    performance,
+                    accessibility,
+                    seo,
+                    bestPractices
+                });
             })
             .catch(error => {
                 sendResponse({ error: error.message });
