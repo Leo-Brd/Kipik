@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadButton = document.getElementById('loadButton');
     const analyzeButton = document.getElementById('analyzePageSpeed');
     const resultsDiv = document.getElementById('pageSpeedResults');
+    const siteInfo = document.getElementById('siteInfo');
 
     console.log('Éléments trouvés:', {
         loadButton: !!loadButton,
@@ -14,9 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsDiv: !!resultsDiv
     });
 
+    // Fonction pour basculer l'affichage des contenus
+    const toggleContent = (showElement, hideElement) => {
+        showElement.style.display = 'block';
+        hideElement.style.display = 'none';
+    };
+
     // Gestion du bouton d'analyse standard
     loadButton.addEventListener('click', async () => {
         console.log('Bouton d\'analyse standard cliqué');
+        
         const button = document.getElementById('loadButton');
         button.disabled = true;
         button.innerHTML = '<span class="button-icon">⏳</span> Analyse en cours...';
@@ -36,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const { title, url, stack, performance, content, advanced } = response;
+
+            toggleContent(siteInfo, resultsDiv);
             
             let html = `
                 <div class="info-section">
@@ -97,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Gestion du bouton PageSpeed
     analyzeButton.addEventListener('click', async () => {
         console.log('=== DÉBUT ANALYSE PAGESPEED ===');
+        
         console.log('Bouton trouvé:', !!analyzeButton);
         console.log('Bouton cliqué !');
         
@@ -156,6 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const { performance, accessibility, seo, bestPractices } = response;
                 console.log('Scores reçus:', { performance, accessibility, seo, bestPractices });
+
+                toggleContent(resultsDiv, siteInfo);
 
                 // Afficher les résultats
                 document.getElementById('performanceScore').textContent = `${performance}/100`;
