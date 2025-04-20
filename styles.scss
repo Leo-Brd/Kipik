@@ -25,6 +25,7 @@ html, body#kipik-popup {
     background-color: $background-color;
     color: $text-color;
     overflow-x: hidden;
+    font-size: 16.5px;
 }
 
 .popup-container {
@@ -58,7 +59,7 @@ html, body#kipik-popup {
     }
 
     .subtitle {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         opacity: 0.9;
         margin: 0;
     }
@@ -78,12 +79,12 @@ html, body#kipik-popup {
     justify-content: center;
     gap: 0.5rem;
     width: 100%;
-    padding: 0.8rem 1.5rem;
+    padding: 0.85rem 1.5rem;
     background-color: $primary-color;
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -99,7 +100,7 @@ html, body#kipik-popup {
     }
 
     .button-icon {
-        font-size: 1.2rem;
+        font-size: 1.15rem;
     }
 }
 
@@ -114,7 +115,7 @@ html, body#kipik-popup {
 .info-section {
     background-color: white;
     border-radius: 8px;
-    padding: 1.2rem;
+    padding: 1.25rem;
     box-shadow: 0 2px 4px $shadow-color;
     transition: transform 0.3s ease;
     width: 100%;
@@ -125,15 +126,16 @@ html, body#kipik-popup {
 
     h2 {
         color: $primary-color;
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
+        font-size: 1.35rem;
+        margin-bottom: 1.05rem;
+        padding-bottom: 0.55rem;
         border-bottom: 2px solid $border-color;
     }
 
     p {
-        margin-bottom: 0.5rem;
-        line-height: 1.5;
+        margin-bottom: 0.55rem;
+        line-height: 1.45;
+        font-size: 1.05rem;
 
         strong {
             color: $secondary-color;
@@ -143,11 +145,12 @@ html, body#kipik-popup {
 
     ul {
         list-style: none;
-        margin-left: 1rem;
+        margin-left: 1.05rem;
+        font-size: 1.05rem;
 
         li {
-            margin-bottom: 0.3rem;
-            padding-left: 1rem;
+            margin-bottom: 0.55rem;
+            padding-left: 1.05rem;
             position: relative;
 
             &::before {
@@ -155,6 +158,7 @@ html, body#kipik-popup {
                 color: $primary-color;
                 position: absolute;
                 left: 0;
+                font-size: 1.15rem;
             }
         }
     }
@@ -163,9 +167,9 @@ html, body#kipik-popup {
 // Footer
 .footer {
     background-color: $background-color;
-    padding: 1rem;
+    padding: 1.05rem;
     text-align: center;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: $secondary-color;
     border-top: 1px solid $border-color;
     width: 100%;
@@ -232,5 +236,34 @@ html, body#kipik-popup {
         font-size: 1.5rem;
         font-weight: bold;
         color: $primary-color;
+    }
+}
+
+// Styles pour les exemples de polices
+.font-example {
+    display: flex;
+    align-items: center;
+    gap: 1.05rem;
+    margin-bottom: 0.85rem;
+    padding: 0.85rem;
+    border-radius: 4px;
+    background-color: rgba($primary-color, 0.05);
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: rgba($primary-color, 0.1);
+    }
+
+    .font-name {
+        min-width: 155px;
+        font-weight: 500;
+        color: $primary-color;
+        font-size: 1.15rem;
+    }
+
+    .font-sample {
+        flex: 1;
+        font-size: 1.35rem;
+        line-height: 1.35;
     }
 }

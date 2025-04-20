@@ -44,46 +44,68 @@ console.log("[Kipik] Détecteur de contenu actif");
 
     function detectFonts() {
         try {
-            const fonts = new Set();
+            const fontCounts = new Map();
             
-            // 1. Analyser les styles inline
+            // Liste des polices système génériques à exclure
+            const systemFonts = [
+                'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'
+            ];
+            
+            // Mappage des polices système vers leurs noms d'affichage
+            const systemFontNames = {
+                '-apple-system': 'SF Pro',
+                'system-ui': 'System UI',
+                'blinkmacsystemfont': 'SF Pro',
+                'segoe ui': 'Segoe UI',
+                'roboto': 'Roboto',
+                'helvetica neue': 'Helvetica Neue',
+                'arial': 'Arial'
+            };
+            
+            // Analyser les éléments visibles
             const elements = document.querySelectorAll('*');
             elements.forEach(element => {
+                // Vérifier si l'élément est visible
                 const style = window.getComputedStyle(element);
+                if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+                    return;
+                }
+
+                // Vérifier si l'élément a du texte
+                if (!element.textContent || element.textContent.trim() === '') {
+                    return;
+                }
+
                 const fontFamily = style.fontFamily;
                 if (fontFamily && fontFamily !== 'inherit') {
-                    // Nettoyer et séparer les polices
-                    fontFamily.split(',').forEach(font => {
-                        font = font.trim().replace(/['"]/g, '');
-                        if (font && font !== 'serif' && font !== 'sans-serif' && font !== 'monospace') {
-                            fonts.add(font);
-                        }
-                    });
+                    // Prendre la première police de la liste (celle qui est effectivement utilisée)
+                    const font = fontFamily.split(',')[0].trim().replace(/['"]/g, '');
+                    
+                    // Nettoyer et normaliser le nom de la police
+                    const cleanFont = font.toLowerCase();
+                    
+                    // Si c'est une police système connue, utiliser son nom d'affichage
+                    const displayName = systemFontNames[cleanFont];
+                    if (displayName) {
+                        fontCounts.set(displayName, (fontCounts.get(displayName) || 0) + 1);
+                    }
+                    // Sinon, si ce n'est pas une police générique, l'ajouter
+                    else if (!systemFonts.includes(cleanFont)) {
+                        fontCounts.set(font, (fontCounts.get(font) || 0) + 1);
+                    }
                 }
             });
 
-            // 2. Analyser les @font-face
-            const styleSheets = document.styleSheets;
-            for (let i = 0; i < styleSheets.length; i++) {
-                try {
-                    const rules = styleSheets[i].cssRules;
-                    for (let j = 0; j < rules.length; j++) {
-                        if (rules[j].type === CSSRule.FONT_FACE_RULE) {
-                            const fontFamily = rules[j].style.fontFamily;
-                            if (fontFamily) {
-                                fonts.add(fontFamily.replace(/['"]/g, ''));
-                            }
-                        }
-                    }
-                } catch (e) {
-                    // Ignorer les erreurs de CORS
-                    console.log("[Kipik] Impossible d'accéder à certaines feuilles de style:", e);
-                }
-            }
+            // Trier les polices par fréquence d'utilisation
+            const sortedFonts = Array.from(fontCounts.entries())
+                .sort((a, b) => b[1] - a[1])
+                .map(entry => entry[0]);
 
-            const fontsArray = Array.from(fonts);
-            console.log("[Kipik] Polices détectées:", fontsArray);
-            return fontsArray;
+            // Ne garder que les 5 polices les plus utilisées
+            const mainFonts = sortedFonts.slice(0, 5);
+            
+            console.log("[Kipik] Polices principales du site:", mainFonts);
+            return mainFonts;
         } catch (error) {
             console.error("[Kipik] Erreur lors de la détection des polices:", error);
             return [];

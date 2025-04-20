@@ -71,21 +71,4 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         return true;
     }
-
-    if (message.type === 'GET_VIDEOS') {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs[0]) {
-                chrome.tabs.sendMessage(tabs[0].id, { type: 'GET_VIDEOS' }, (response) => {
-                    if (chrome.runtime.lastError) {
-                        sendResponse({ error: chrome.runtime.lastError.message });
-                    } else {
-                        sendResponse(response);
-                    }
-                });
-            } else {
-                sendResponse({ error: 'Aucun onglet actif trouvé' });
-            }
-        });
-        return true;
-    }
 });

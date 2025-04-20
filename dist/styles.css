@@ -15,6 +15,7 @@ html, body#kipik-popup {
   background-color: #ffffff;
   color: #2c3e50;
   overflow-x: hidden;
+  font-size: 16.5px;
 }
 
 .popup-container {
@@ -45,7 +46,7 @@ html, body#kipik-popup {
   border-radius: 50%;
 }
 .header .subtitle {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   opacity: 0.9;
   margin: 0;
 }
@@ -63,12 +64,12 @@ html, body#kipik-popup {
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 0.8rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   background-color: #4a6bff;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -82,7 +83,7 @@ html, body#kipik-popup {
   transform: translateY(0);
 }
 .analyze-button .button-icon {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
 }
 
 .info-container {
@@ -95,7 +96,7 @@ html, body#kipik-popup {
 .info-section {
   background-color: white;
   border-radius: 8px;
-  padding: 1.2rem;
+  padding: 1.25rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   width: 100%;
@@ -105,14 +106,15 @@ html, body#kipik-popup {
 }
 .info-section h2 {
   color: #4a6bff;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
+  font-size: 1.35rem;
+  margin-bottom: 1.05rem;
+  padding-bottom: 0.55rem;
   border-bottom: 2px solid #e9ecef;
 }
 .info-section p {
-  margin-bottom: 0.5rem;
-  line-height: 1.5;
+  margin-bottom: 0.55rem;
+  line-height: 1.45;
+  font-size: 1.05rem;
 }
 .info-section p strong {
   color: #6c757d;
@@ -120,11 +122,12 @@ html, body#kipik-popup {
 }
 .info-section ul {
   list-style: none;
-  margin-left: 1rem;
+  margin-left: 1.05rem;
+  font-size: 1.05rem;
 }
 .info-section ul li {
-  margin-bottom: 0.3rem;
-  padding-left: 1rem;
+  margin-bottom: 0.55rem;
+  padding-left: 1.05rem;
   position: relative;
 }
 .info-section ul li::before {
@@ -132,13 +135,14 @@ html, body#kipik-popup {
   color: #4a6bff;
   position: absolute;
   left: 0;
+  font-size: 1.15rem;
 }
 
 .footer {
   background-color: #ffffff;
-  padding: 1rem;
+  padding: 1.05rem;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: #6c757d;
   border-top: 1px solid #e9ecef;
   width: 100%;
@@ -199,6 +203,31 @@ html, body#kipik-popup {
   font-size: 1.5rem;
   font-weight: bold;
   color: #4a6bff;
+}
+
+.font-example {
+  display: flex;
+  align-items: center;
+  gap: 1.05rem;
+  margin-bottom: 0.85rem;
+  padding: 0.85rem;
+  border-radius: 4px;
+  background-color: rgba(74, 107, 255, 0.05);
+  transition: background-color 0.3s ease;
+}
+.font-example:hover {
+  background-color: rgba(74, 107, 255, 0.1);
+}
+.font-example .font-name {
+  min-width: 155px;
+  font-weight: 500;
+  color: #4a6bff;
+  font-size: 1.15rem;
+}
+.font-example .font-sample {
+  flex: 1;
+  font-size: 1.35rem;
+  line-height: 1.35;
 }
 
 /*# sourceMappingURL=styles.css.map */

@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="info-section">
                     <h2>Polices utilisées</h2>
-                    <ul>
+                    <ul id="fontsList">
                         ${content.fonts.map(font => `<li>${font}</li>`).join('')}
                     </ul>
                 </div>
@@ -99,6 +99,38 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             document.getElementById('siteInfo').innerHTML = html;
+
+            // Afficher les polices utilisées
+            const fontsList = document.getElementById('fontsList');
+            if (content.fonts && content.fonts.length > 0) {
+                const sampleText = "Keep Peek";
+                
+                // Créer un lien vers Google Fonts pour chaque police
+                const fontLinks = content.fonts.map(font => {
+                    const fontName = font.replace(/\s+/g, '+');
+                    return `https://fonts.googleapis.com/css2?family=${fontName}:wght@400&display=swap`;
+                });
+
+                // Charger les polices
+                fontLinks.forEach(link => {
+                    const linkElement = document.createElement('link');
+                    linkElement.rel = 'stylesheet';
+                    linkElement.href = link;
+                    document.head.appendChild(linkElement);
+                });
+
+                fontsList.innerHTML = content.fonts.map(font => `
+                    <li class="font-example">
+                        <span class="font-name">${font}</span>
+                        <span class="font-sample" style="font-family: '${font}'">
+                            ${sampleText}
+                        </span>
+                    </li>
+                `).join('');
+            } else {
+                fontsList.innerHTML = '<li>Aucune police détectée</li>';
+            }
+
             button.disabled = false;
             button.innerHTML = '<span class="button-icon">🔄</span> Analyser à nouveau';
         });
