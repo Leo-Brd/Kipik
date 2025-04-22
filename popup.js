@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h2>Meta Tags</h2>
                     <p><strong>Description:</strong> ${advanced.metaTags.description || 'Non définie'}</p>
                     <p><strong>Mots-clés:</strong> ${advanced.metaTags.keywords || 'Non définis'}</p>
-                    <p><strong>Viewport:</strong> ${advanced.metaTags.viewport || 'Non défini'}</p>
                 </div>
 
                 <div class="info-section">
@@ -105,28 +104,71 @@ document.addEventListener('DOMContentLoaded', () => {
             if (content.fonts && content.fonts.length > 0) {
                 const sampleText = "Keep Peek";
                 
-                // Créer un lien vers Google Fonts pour chaque police
-                const fontLinks = content.fonts.map(font => {
+                // Liste des polices système courantes à exclure
+                const systemFonts = ['system-ui', 'ui-sans-serif', 'ui-serif', 'ui-monospace', 'ui-rounded', 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
+                
+                // Liste des polices CSS par défaut
+                const defaultFonts = [
+                    'Arial', 'Helvetica', 'Times New Roman', 'Times', 'Courier New', 'Courier',
+                    'Verdana', 'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS',
+                    'Trebuchet MS', 'Arial Black', 'Impact'
+                ];
+                
+                // Filtrer les polices système
+                const customFonts = content.fonts.filter(font => !systemFonts.includes(font.toLowerCase()));
+                
+                // Fonction pour vérifier et afficher une police
+                const checkAndDisplayFont = async (font) => {
                     const fontName = font.replace(/\s+/g, '+');
-                    return `https://fonts.googleapis.com/css2?family=${fontName}:wght@400&display=swap`;
-                });
+                    const fontUrl = `https://fonts.googleapis.com/css2?family=${fontName}:wght@400&display=swap`;
+                    
+                    // Vérifier si c'est une police CSS par défaut
+                    if (defaultFonts.some(defaultFont => defaultFont.toLowerCase() === font.toLowerCase())) {
+                        return `
+                            <li class="font-example">
+                                <span class="font-name">${font}</span>
+                                <span class="font-sample" style="font-family: '${font}'">
+                                    ${sampleText}
+                                </span>
+                            </li>
+                        `;
+                    }
+                    
+                    try {
+                        const response = await fetch(fontUrl);
+                        if (response.ok) {
+                            // Charger la police depuis Google Fonts
+                            const linkElement = document.createElement('link');
+                            linkElement.rel = 'stylesheet';
+                            linkElement.href = fontUrl;
+                            document.head.appendChild(linkElement);
+                            
+                            return `
+                                <li class="font-example">
+                                    <span class="font-name">${font}</span>
+                                    <span class="font-sample" style="font-family: '${font}'">
+                                        ${sampleText}
+                                    </span>
+                                </li>
+                            `;
+                        }
+                    } catch (error) {
+                        console.log(`La police ${font} n'est pas disponible sur Google Fonts`);
+                    }
+                    
+                    // Pour les autres polices, n'afficher que le nom
+                    return `
+                        <li class="font-example">
+                            <span class="font-name">${font}</span>
+                        </li>
+                    `;
+                };
 
-                // Charger les polices
-                fontLinks.forEach(link => {
-                    const linkElement = document.createElement('link');
-                    linkElement.rel = 'stylesheet';
-                    linkElement.href = link;
-                    document.head.appendChild(linkElement);
+                // Vérifier et afficher toutes les polices
+                const fontPromises = customFonts.map(checkAndDisplayFont);
+                Promise.all(fontPromises).then(fontElements => {
+                    fontsList.innerHTML = fontElements.join('');
                 });
-
-                fontsList.innerHTML = content.fonts.map(font => `
-                    <li class="font-example">
-                        <span class="font-name">${font}</span>
-                        <span class="font-sample" style="font-family: '${font}'">
-                            ${sampleText}
-                        </span>
-                    </li>
-                `).join('');
             } else {
                 fontsList.innerHTML = '<li>Aucune police détectée</li>';
             }
