@@ -57,9 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="info-section">
                     <h2>Stack technique</h2>
-                    <ul>
-                        ${stack.map(tech => `<li>${tech}</li>`).join('')}
-                    </ul>
+                    <div class="tech-stack">
+                        ${stack.map(tech => `
+                            <div class="tech-item">
+                                <img src="assets/tech-logos/${tech}.svg" alt="${tech}" class="tech-logo" />
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
 
                 <div class="info-section">

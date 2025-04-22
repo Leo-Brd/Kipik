@@ -169,6 +169,77 @@ html, body#kipik-popup {
             }
         }
     }
+
+    .tech-stack {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tech-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: rgba($primary-color, 0.05);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgba($primary-color, 0.1);
+            transform: translateY(-2px);
+
+            .tech-name {
+                opacity: 1;
+                transform: translateY(0);
+                visibility: visible;
+            }
+        }
+
+        .tech-logo {
+            object-fit: contain;
+            display: block;
+            fill: currentColor;
+            color: $primary-color;
+        }
+
+        .tech-name {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background-color: $primary-color;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: -4px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-bottom: 4px solid $primary-color;
+            }
+        }
+    }
 }
 
 // Footer

@@ -6,7 +6,6 @@
       const html = document.documentElement.outerHTML;
       const scripts = Array.from(document.scripts).map(script => script.src || script.innerText);
       const metas = Array.from(document.getElementsByTagName('meta')).map(meta => meta.outerHTML.toLowerCase());
-      const links = Array.from(document.getElementsByTagName('link')).map(link => link.href);
   
       // --- Frontend Frameworks ---
       if (scripts.some(src => src.includes('react')) || html.includes('data-reactroot')) {
@@ -102,9 +101,6 @@
       }
       if (scripts.some(src => src.includes('lodash'))) {
         stack.push('Lodash');
-      }
-      if (scripts.some(src => src.includes('underscore'))) {
-        stack.push('Underscore.js');
       }
       if (scripts.some(src => src.includes('moment'))) {
         stack.push('Moment.js');
