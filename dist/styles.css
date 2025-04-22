@@ -83,7 +83,8 @@ html, body#kipik-popup {
   transform: translateY(0);
 }
 .analyze-button .button-icon {
-  font-size: 1.15rem;
+  height: 25px;
+  width: auto;
 }
 
 .info-container {

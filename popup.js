@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const button = document.getElementById('loadButton');
         button.disabled = true;
-        button.innerHTML = '<span class="button-icon">⏳</span> Analyse en cours...';
+        button.innerHTML = '<img src="assets/sablier.png" alt="Logo sablier" class="button-icon" /> Analyse en cours...';
 
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div class="info-section">
-                    <h2>Polices utilisées</h2>
+                    <h2>Polices détectées</h2>
                     <ul id="fontsList">
                         ${content.fonts.map(font => `<li>${font}</li>`).join('')}
                     </ul>
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             button.disabled = false;
-            button.innerHTML = '<span class="button-icon">🔄</span> Analyser à nouveau';
+            button.innerHTML = '<img src="assets/refresh.png" alt="Logo Refresh" class="button-icon" /> Analyser à nouveau';
         });
     });
 
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log('Désactivation du bouton...');
             analyzeButton.disabled = true;
-            analyzeButton.innerHTML = '<span class="button-icon">⏳</span> Analyse en cours...';
+            analyzeButton.innerHTML = '<img src="assets/sablier.png" alt="Logo sablier" class="button-icon" /> Analyse en cours...';
             resultsDiv.style.display = 'none';
             
             // Récupérer l'URL actuelle
