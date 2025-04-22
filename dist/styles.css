@@ -143,6 +143,69 @@ html, body#kipik-popup {
   left: 0;
   font-size: 1.15rem;
 }
+.info-section .tech-stack {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+.info-section .tech-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.info-section .tech-item:hover {
+  background-color: rgba(74, 107, 255, 0.05);
+  transform: translateY(-2px);
+}
+.info-section .tech-item:hover .tech-name {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+.info-section .tech-item .tech-logo {
+  object-fit: contain;
+  display: block;
+  fill: currentColor;
+  color: #4a6bff;
+}
+.info-section .tech-item .tech-name {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: #4a6bff;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.info-section .tech-item .tech-name::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #4a6bff;
+}
 
 .footer {
   background-color: #ffffff;

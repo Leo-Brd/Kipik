@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${stack.map(tech => `
                             <div class="tech-item">
                                 <img src="assets/tech-logos/${tech}.svg" alt="${tech}" class="tech-logo" />
+                                <span class="tech-name">${tech}</span>
                             </div>
                         `).join('')}
                     </div>
