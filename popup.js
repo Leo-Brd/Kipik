@@ -21,6 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
         hideElement.style.display = 'none';
     };
 
+    // Mappage langue -> drapeau (flag-icons)
+    function mapLanguageToFlagClass(lang) {
+        const map = { en: 'gb', zh: 'cn', ja: 'jp' };
+        const code = lang?.toLowerCase().split('-')[0];
+        const country = map[code] || code;
+        return `fi fi-${country}`;
+    }
+
     // Gestion du bouton d'analyse standard
     loadButton.addEventListener('click', async () => {
         console.log('Bouton d\'analyse standard cliqué');
@@ -52,7 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h2>Informations de base</h2>
                     <p><strong>Titre:</strong> ${title}</p>
                     <p><strong>URL:</strong> ${url}</p>
-                    <p><strong>Langue:</strong> ${content.language}</p>
+                    <p><strong>Langue:</strong>
+                        ${(Array.isArray(content.language) ? content.language : [content.language])
+                        .map(lang => `<span class="${mapLanguageToFlagClass(lang)}"></span>`)
+                        .join('')}
+                    </p>
                 </div>
 
                 <div class="info-section">

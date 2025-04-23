@@ -1,46 +1,40 @@
 console.log("[Kipik] Détecteur de contenu actif");
 
 (function() {
-    function detectLanguage() {
+    function detectAvailableLanguages() {
         try {
-            // 1. Vérifier l'attribut lang de l'élément html
-            const htmlLang = document.documentElement.lang;
-            console.log("[Kipik] Langue HTML détectée:", htmlLang);
-            
-            // 2. Analyser le contenu textuel pour détecter la langue
-            const textContent = document.body ? document.body.innerText : '';
-            const commonWords = {
-                'fr': ['le', 'la', 'les', 'un', 'une', 'des', 'est', 'sont', 'dans', 'pour'],
-                'en': ['the', 'a', 'an', 'is', 'are', 'in', 'on', 'at', 'to', 'for'],
-                'es': ['el', 'la', 'los', 'las', 'un', 'una', 'es', 'son', 'en', 'por'],
-                'de': ['der', 'die', 'das', 'ein', 'eine', 'ist', 'sind', 'in', 'für', 'zu']
-            };
-
-            let detectedLang = htmlLang || 'unknown';
-            let maxMatches = 0;
-
-            // Si pas de lang défini, analyser le contenu
-            if (!htmlLang && textContent) {
-                console.log("[Kipik] Analyse du contenu pour détecter la langue...");
-                for (const [lang, words] of Object.entries(commonWords)) {
-                    const matches = words.filter(word => 
-                        textContent.toLowerCase().includes(word)
-                    ).length;
-                    
-                    if (matches > maxMatches) {
-                        maxMatches = matches;
-                        detectedLang = lang;
-                    }
-                }
-                console.log("[Kipik] Langue détectée par analyse:", detectedLang);
+            const normalize = lang => lang?.toLowerCase().split('-')[0];
+            // 1) Langue de la balise <html lang>
+            const htmlLang = normalize(document.documentElement.lang);
+            if (htmlLang) {
+                return [htmlLang];
             }
-
-            return detectedLang;
-        } catch (error) {
-            console.error("[Kipik] Erreur lors de la détection de la langue:", error);
-            return "unknown";
+            // 2) Fallback: recherche de quelques mots-clés dans le contenu
+            const text = (document.body?.innerText + '').toLowerCase();
+            const commonWords = {
+                fr: [' le ', ' la ', ' les ', ' un ', ' une '],
+                en: [' the ', ' a ', ' an ', ' is '],
+                es: [' el ', ' la ', ' los ', ' las '],
+                de: [' der ', ' die ', ' das ', ' ein ']
+            };
+            let detected = null;
+            let maxMatches = 0;
+            Object.entries(commonWords).forEach(([lang, words]) => {
+                const count = words.reduce((acc, w) => acc + (text.includes(w) ? 1 : 0), 0);
+                if (count > maxMatches) {
+                    maxMatches = count;
+                    detected = lang;
+                }
+            });
+            return detected ? [detected] : [];
+        } catch (e) {
+            console.error("[Kipik] Erreur dans detectAvailableLanguages:", e);
+            return [];
         }
     }
+    
+    
+    
 
     function detectFonts() {
         try {
@@ -112,20 +106,20 @@ console.log("[Kipik] Détecteur de contenu actif");
         }
     }
 
-    try {
-        const contentData = {
-            language: detectLanguage(),
-            fonts: detectFonts()
-        };
-
-        console.log("[Kipik] Données de contenu collectées:", contentData);
-        console.log("[Kipik] Envoi des données de contenu au content script");
-        window.postMessage({ type: 'CONTENT_DATA', data: contentData }, '*');
-    } catch (error) {
-        console.error("[Kipik] Erreur générale du détecteur de contenu:", error);
-        window.postMessage({ 
-            type: 'CONTENT_DATA', 
-            data: { language: "unknown", fonts: [] } 
-        }, '*');
-    }
+    // Envoi des données après détection asynchrone
+    (async () => {
+        try {
+            const languages = await detectAvailableLanguages();
+            const fonts = detectFonts();
+            const contentData = { language: languages, fonts: fonts };
+            console.log("[Kipik] Données de contenu collectées:", contentData);
+            window.postMessage({ type: 'CONTENT_DATA', data: contentData }, '*');
+        } catch (error) {
+            console.error("[Kipik] Erreur générale du détecteur de contenu:", error);
+            window.postMessage({
+                type: 'CONTENT_DATA',
+                data: { language: [], fonts: [] }
+            }, '*');
+        }
+    })();
 })(); 
