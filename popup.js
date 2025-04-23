@@ -90,15 +90,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="info-section">
                     <h2>Stockage</h2>
-                    <p><strong>Cookies:</strong> ${advanced.storage.cookies.length}</p>
-                    <p><strong>Local Storage:</strong> ${advanced.storage.localStorage.length}</p>
-                    <p><strong>Session Storage:</strong> ${advanced.storage.sessionStorage.length}</p>
+                    <p><strong>🍪 Cookies:</strong> ${advanced.storage.cookies.length}</p>
+                    <p><strong>🔗 Local Storage:</strong> ${advanced.storage.localStorage.length}</p>
+                    <p><strong>🔑 Session Storage:</strong> ${advanced.storage.sessionStorage.length}</p>
                 </div>
 
                 <div class="info-section">
                     <h2>Liens</h2>
-                    <p><strong>Liens internes:</strong> ${advanced.links.internal.length}</p>
-                    <p><strong>Liens externes:</strong> ${advanced.links.external.length}</p>
+                    <div class="chart-container">
+                        <canvas id="linksChart" width="200" height="200"></canvas>
+                    </div>
                 </div>
             `;
 
@@ -173,6 +174,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const fontPromises = customFonts.map(checkAndDisplayFont);
                 Promise.all(fontPromises).then(fontElements => {
                     fontsList.innerHTML = fontElements.join('');
+                    // Générer un camembert pour les liens internes vs externes
+                    const ctxLinks = document.getElementById('linksChart').getContext('2d');
+                    new Chart(ctxLinks, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Liens internes', 'Liens externes'],
+                            datasets: [{
+                                data: [advanced.links.internal.length, advanced.links.external.length],
+                                backgroundColor: ['#4a6bff', '#dc3545']
+                            }]
+                        },
+                        options: {
+                            responsive: false,  // utilisation de la taille fixe du canvas
+                            plugins: { legend: { position: 'bottom' } }
+                        }
+                    });
                 });
             } else {
                 fontsList.innerHTML = '<li>Aucune police détectée</li>';

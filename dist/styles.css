@@ -206,6 +206,11 @@ html, body#kipik-popup {
   border-right: 4px solid transparent;
   border-bottom: 4px solid #4a6bff;
 }
+.info-section .chart-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
 
 .footer {
   background-color: #ffffff;

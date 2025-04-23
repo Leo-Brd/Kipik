@@ -237,7 +237,13 @@ html, body#kipik-popup {
                 border-right: 4px solid transparent;
                 border-bottom: 4px solid $primary-color;
             }
-        }
+        }       
+    }
+
+    .chart-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }
 }
 
