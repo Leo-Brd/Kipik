@@ -1,60 +1,57 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 console.log('=== INITIALISATION POPUP.JS ===');
 console.log('DOM Content Loaded ?', document.readyState);
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== DOM CONTENT LOADED ===');
-    
     const loadButton = document.getElementById('loadButton');
     const analyzeButton = document.getElementById('analyzePageSpeed');
     const resultsDiv = document.getElementById('pageSpeedResults');
     const siteInfo = document.getElementById('siteInfo');
-
     console.log('Éléments trouvés:', {
         loadButton: !!loadButton,
         analyzeButton: !!analyzeButton,
         resultsDiv: !!resultsDiv
     });
-
     // Fonction pour basculer l'affichage des contenus
     const toggleContent = (showElement, hideElement) => {
         showElement.style.display = 'block';
         hideElement.style.display = 'none';
     };
-
     // Mappage langue -> drapeau (flag-icons)
     function mapLanguageToFlagClass(lang) {
         const map = { en: 'gb', zh: 'cn', ja: 'jp' };
-        const code = lang?.toLowerCase().split('-')[0];
+        const code = (lang !== null && lang !== void 0 ? lang : '').toLowerCase().split('-')[0];
         const country = map[code] || code;
         return `fi fi-${country}`;
     }
-
     // Gestion du bouton d'analyse standard
-    loadButton.addEventListener('click', async () => {
+    loadButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
         console.log('Bouton d\'analyse standard cliqué');
-        
-        const button = document.getElementById('loadButton');
-        button.disabled = true;
-        button.innerHTML = '<img src="assets/sablier.png" alt="Logo sablier" class="button-icon" /> Analyse en cours...';
-
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        
+        loadButton.disabled = true;
+        loadButton.innerHTML = '<img src="assets/sablier.png" alt="Logo sablier" class="button-icon" /> Analyse en cours...';
+        const [tab] = (yield chrome.tabs.query({ active: true, currentWindow: true }));
         chrome.tabs.sendMessage(tab.id, { type: "GET_PAGE_INFO" }, (response) => {
             if (chrome.runtime.lastError) {
-                document.getElementById('siteInfo').innerHTML = `
+                siteInfo.innerHTML = `
                     <div class="error">
                         <strong>Erreur:</strong> ${chrome.runtime.lastError.message}
                     </div>
                 `;
-                button.disabled = false;
-                button.innerHTML = '<span class="button-icon">🔍</span> Réessayer';
+                loadButton.disabled = false;
+                loadButton.innerHTML = '<span class="button-icon">��</span> Réessayer';
                 return;
             }
-
             const { title, url, stack, performance, content, advanced } = response;
-
             toggleContent(siteInfo, resultsDiv);
-            
             let html = `
                 <div class="info-section">
                     <h2>Informations de base</h2>
@@ -62,15 +59,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>URL:</strong> ${url}</p>
                     <p><strong>Langue:</strong>
                         ${(Array.isArray(content.language) ? content.language : [content.language])
-                        .map(lang => `<span class="${mapLanguageToFlagClass(lang)}"></span>`)
-                        .join('')}
+                .map((lang) => `<span class="${mapLanguageToFlagClass(lang)}"></span>`)
+                .join('')}
                     </p>
                 </div>
 
                 <div class="info-section">
                     <h2>Stack technique</h2>
                     <div class="tech-stack">
-                        ${stack.map(tech => `
+                        ${stack.map((tech) => `
                             <div class="tech-item">
                                 <img src="assets/tech-logos/${tech}.svg" alt="${tech}" class="tech-logo" />
                                 <span class="tech-name">${tech}</span>
@@ -90,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="info-section">
                     <h2>Polices détectées</h2>
                     <ul id="fontsList">
-                        ${content.fonts.map(font => `<li>${font}</li>`).join('')}
+                        ${content.fonts.map((font) => `<li>${font}</li>`).join('')}
                     </ul>
                 </div>
 
@@ -114,32 +111,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
-
-            document.getElementById('siteInfo').innerHTML = html;
-
+            siteInfo.innerHTML = html;
             // Afficher les polices utilisées
             const fontsList = document.getElementById('fontsList');
             if (content.fonts && content.fonts.length > 0) {
                 const sampleText = "Keep Peek";
-                
                 // Liste des polices système courantes à exclure
                 const systemFonts = ['system-ui', 'ui-sans-serif', 'ui-serif', 'ui-monospace', 'ui-rounded', 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
-                
                 // Liste des polices CSS par défaut
                 const defaultFonts = [
                     'Arial', 'Helvetica', 'Times New Roman', 'Times', 'Courier New', 'Courier',
                     'Verdana', 'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS',
                     'Trebuchet MS', 'Arial Black', 'Impact'
                 ];
-                
                 // Filtrer les polices système
-                const customFonts = content.fonts.filter(font => !systemFonts.includes(font.toLowerCase()));
-                
+                const customFonts = content.fonts.filter((font) => systemFonts.indexOf(font.toLowerCase()) === -1);
                 // Fonction pour vérifier et afficher une police
-                const checkAndDisplayFont = async (font) => {
+                const checkAndDisplayFont = (font) => __awaiter(void 0, void 0, void 0, function* () {
                     const fontName = font.replace(/\s+/g, '+');
                     const fontUrl = `https://fonts.googleapis.com/css2?family=${fontName}:wght@400&display=swap`;
-                    
                     // Vérifier si c'est une police CSS par défaut
                     if (defaultFonts.some(defaultFont => defaultFont.toLowerCase() === font.toLowerCase())) {
                         return `
@@ -151,16 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             </li>
                         `;
                     }
-                    
                     try {
-                        const response = await fetch(fontUrl);
+                        const response = yield fetch(fontUrl);
                         if (response.ok) {
                             // Charger la police depuis Google Fonts
                             const linkElement = document.createElement('link');
                             linkElement.rel = 'stylesheet';
                             linkElement.href = fontUrl;
                             document.head.appendChild(linkElement);
-                            
                             return `
                                 <li class="font-example">
                                     <span class="font-name">${font}</span>
@@ -170,18 +158,17 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </li>
                             `;
                         }
-                    } catch (error) {
+                    }
+                    catch (error) {
                         console.log(`La police ${font} n'est pas disponible sur Google Fonts`);
                     }
-                    
                     // Pour les autres polices, n'afficher que le nom
                     return `
                         <li class="font-example">
                             <span class="font-name">${font}</span>
                         </li>
                     `;
-                };
-
+                });
                 // Vérifier et afficher toutes les polices
                 const fontPromises = customFonts.map(checkAndDisplayFont);
                 Promise.all(fontPromises).then(fontElements => {
@@ -193,67 +180,59 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: {
                             labels: ['Liens internes', 'Liens externes'],
                             datasets: [{
-                                data: [advanced.links.internal.length, advanced.links.external.length],
-                                backgroundColor: ['#4a6bff', '#dc3545']
-                            }]
+                                    data: [advanced.links.internal.length, advanced.links.external.length],
+                                    backgroundColor: ['#4a6bff', '#dc3545']
+                                }]
                         },
                         options: {
-                            responsive: false,  // utilisation de la taille fixe du canvas
+                            responsive: false, // utilisation de la taille fixe du canvas
                             plugins: { legend: { position: 'bottom' } }
                         }
                     });
                 });
-            } else {
+            }
+            else {
                 fontsList.innerHTML = '<li>Aucune police détectée</li>';
             }
-
-            button.disabled = false;
-            button.innerHTML = '<img src="assets/refresh.png" alt="Logo Refresh" class="button-icon" /> Analyser à nouveau';
+            loadButton.disabled = false;
+            loadButton.innerHTML = '<img src="assets/refresh.png" alt="Logo Refresh" class="button-icon" /> Analyser à nouveau';
         });
-    });
-
+    }));
     // Gestion du bouton PageSpeed
-    analyzeButton.addEventListener('click', async () => {
+    analyzeButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
         console.log('=== DÉBUT ANALYSE PAGESPEED ===');
-        
         console.log('Bouton trouvé:', !!analyzeButton);
         console.log('Bouton cliqué !');
-        
         try {
             console.log('Désactivation du bouton...');
             analyzeButton.disabled = true;
             analyzeButton.innerHTML = '<img src="assets/sablier.png" alt="Logo sablier" class="button-icon" /> Analyse en cours...';
             resultsDiv.style.display = 'none';
-            
             // Récupérer l'URL actuelle
             console.log('Récupération de l\'onglet actif...');
-            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            const [tab] = yield chrome.tabs.query({ active: true, currentWindow: true });
             console.log('Onglet actif:', tab);
-            
             if (!tab) {
                 throw new Error('Aucun onglet actif trouvé');
             }
-
             const url = tab.url;
             console.log('URL à analyser:', url);
-            
             // Récupérer la clé API
             console.log('Récupération de la clé API...');
-            const apiKey = await new Promise((resolve, reject) => {
+            const apiKey = yield new Promise((resolve, reject) => {
                 chrome.storage.local.get(['apiKey'], (result) => {
                     if (chrome.runtime.lastError) {
                         reject(chrome.runtime.lastError);
-                    } else {
+                    }
+                    else {
                         console.log('Clé API récupérée:', result.apiKey);
                         resolve(result.apiKey);
                     }
                 });
             });
-            
             if (!apiKey) {
                 throw new Error('Clé API non trouvée. Veuillez configurer votre clé API.');
             }
-
             // Envoyer le message au background script
             console.log('Envoi du message au background script...');
             chrome.runtime.sendMessage({
@@ -262,28 +241,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 apiKey: apiKey
             }, (response) => {
                 console.log('Réponse reçue du background script:', response);
-                
                 if (chrome.runtime.lastError) {
                     console.error('Erreur Chrome:', chrome.runtime.lastError);
                     throw new Error(chrome.runtime.lastError.message);
                 }
-
                 if (response.error) {
                     console.error('Erreur de l\'API:', response.error);
                     throw new Error(response.error);
                 }
-
                 const { performance, accessibility, seo, bestPractices } = response;
                 console.log('Scores reçus:', { performance, accessibility, seo, bestPractices });
-
                 toggleContent(resultsDiv, siteInfo);
-
                 // Afficher les résultats
                 document.getElementById('performanceScore').textContent = `${performance}/100`;
                 document.getElementById('accessibilityScore').textContent = `${accessibility}/100`;
                 document.getElementById('seoScore').textContent = `${seo}/100`;
                 document.getElementById('bestPracticesScore').textContent = `${bestPractices}/100`;
-
                 // Appliquer des couleurs
                 const scores = [
                     { element: document.getElementById('performanceScore'), value: performance },
@@ -291,25 +264,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     { element: document.getElementById('seoScore'), value: seo },
                     { element: document.getElementById('bestPracticesScore'), value: bestPractices }
                 ];
-
                 scores.forEach(({ element, value }) => {
                     if (value >= 90) {
                         element.style.color = '#10B981';
-                    } else if (value >= 50) {
+                    }
+                    else if (value >= 50) {
                         element.style.color = '#F59E0B';
-                    } else {
+                    }
+                    else {
                         element.style.color = '#EF4444';
                     }
                 });
-
                 resultsDiv.style.display = 'grid';
                 analyzeButton.disabled = false;
                 analyzeButton.innerHTML = '<span class="button-icon">📊</span> Analyser avec PageSpeed';
             });
-
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Erreur détaillée:', error);
-            document.getElementById('siteInfo').innerHTML = `
+            siteInfo.innerHTML = `
                 <div class="error">
                     <strong>Erreur:</strong> ${error.message}
                 </div>
@@ -317,6 +290,5 @@ document.addEventListener('DOMContentLoaded', () => {
             analyzeButton.disabled = false;
             analyzeButton.innerHTML = '<span class="button-icon">📊</span> Analyser avec PageSpeed';
         }
-    });
+    }));
 });
-
