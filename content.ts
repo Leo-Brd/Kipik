@@ -41,7 +41,7 @@ let advancedDetected = true;
 
 // STACK DETECTOR INJECTION
 const script = document.createElement('script');
-script.src = chrome.runtime.getURL('detectors/detect-stack.js');
+script.src = chrome.runtime.getURL('dist/detectors/detect-stack.js');
 (script.onload = (): void => {
     script.remove();
 });
@@ -49,7 +49,7 @@ script.src = chrome.runtime.getURL('detectors/detect-stack.js');
 
 // PERF DETECTOR INJECTION
 const perfScript = document.createElement('script');
-perfScript.src = chrome.runtime.getURL('detectors/detect-performance.js');
+perfScript.src = chrome.runtime.getURL('dist/detectors/detect-performance.js');
 (perfScript.onload = (): void => {
     perfScript.remove();
 });
@@ -57,7 +57,7 @@ perfScript.src = chrome.runtime.getURL('detectors/detect-performance.js');
 
 // CONTENT DETECTOR INJECTION
 const contentScript = document.createElement('script');
-contentScript.src = chrome.runtime.getURL('detectors/detect-content.js');
+contentScript.src = chrome.runtime.getURL('dist/detectors/detect-content.js');
 (contentScript.onload = (): void => {
     contentScript.remove();
 });
@@ -65,7 +65,7 @@ contentScript.src = chrome.runtime.getURL('detectors/detect-content.js');
 
 // ADVANCED DETECTOR INJECTION
 const advancedScript = document.createElement('script');
-advancedScript.src = chrome.runtime.getURL('detectors/detect-advanced.js');
+advancedScript.src = chrome.runtime.getURL('dist/detectors/detect-advanced.js');
 (advancedScript.onload = (): void => {
     advancedScript.remove();
 });

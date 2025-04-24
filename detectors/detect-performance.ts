@@ -1,11 +1,24 @@
 (function() {
     console.log("[Kipik] Détecteur de performance actif");
   
-    function collectPerformanceData() {
+    // Types pour la communication
+    interface PerformanceData {
+        loadTime: number;
+        domContentLoaded: number;
+        resourceCount: number;
+        totalResourceSizeKB: number;
+    }
+    interface PerformanceMessage {
+        type: 'PERFORMANCE_DATA';
+        data: PerformanceData;
+    }
+  
+    function collectPerformanceData(): PerformanceData {
       try {
         // Utilisation de l'API Performance Timeline
-        const navigationEntry = performance.getEntriesByType('navigation')[0];
-        const resources = performance.getEntriesByType('resource');
+        const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+        const navigationEntry = navigationEntries[0];
+        const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
         
         let loadTime = 0;
         let domContentLoaded = 0;
@@ -21,7 +34,7 @@
           return acc + (res.transferSize || res.encodedBodySize || 0);
         }, 0);
         
-        const data = {
+        const data: PerformanceData = {
           loadTime: Math.max(0, Math.round(loadTime)),
           domContentLoaded: Math.max(0, Math.round(domContentLoaded)),
           resourceCount: resources.length,
@@ -47,8 +60,9 @@
       for (const entry of entries) {
         if (entry.entryType === 'navigation') {
           const performanceData = collectPerformanceData();
-          console.log("[Kipik] Envoi des données de performance au content script");
-          window.postMessage({ type: 'PERFORMANCE_DATA', data: performanceData }, '*');
+          console.log("[Kipik] Envoi des données de performance au content script", performanceData);
+          const message: PerformanceMessage = { type: 'PERFORMANCE_DATA', data: performanceData };
+          window.postMessage(message, '*');
         }
       }
     });
@@ -59,7 +73,8 @@
     // Collecte initiale
     const initialData = collectPerformanceData();
     if (initialData.loadTime > 0) {
-      window.postMessage({ type: 'PERFORMANCE_DATA', data: initialData }, '*');
+      const messageInit: PerformanceMessage = { type: 'PERFORMANCE_DATA', data: initialData };
+      window.postMessage(messageInit, '*');
     }
   })();
   

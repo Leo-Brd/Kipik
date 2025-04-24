@@ -1,11 +1,17 @@
+// Types pour la communication
+interface StackMessage {
+    type: 'STACK_DETECTED';
+    stack: string[];
+}
+
 (function() {
     console.log("[Kipik] Détecteur de stack actif");
   
-    function detectFrameworks() {
-      const stack = [];
-      const html = document.documentElement.outerHTML;
-      const scripts = Array.from(document.scripts).map(script => script.src || script.innerText);
-      const metas = Array.from(document.getElementsByTagName('meta')).map(meta => meta.outerHTML.toLowerCase());
+    function detectFrameworks(): string[] {
+      const stack: string[] = [];
+      const html: string = document.documentElement.outerHTML;
+      const scripts: string[] = Array.from(document.scripts).map((script: HTMLScriptElement) => script.src || script.innerText);
+      const metas: string[] = Array.from(document.getElementsByTagName('meta')).map((meta: HTMLMetaElement) => meta.outerHTML.toLowerCase());
   
       // --- Frontend Frameworks ---
       if (scripts.some(src => src.includes('react')) || html.includes('data-reactroot')) {
@@ -96,7 +102,7 @@
       }
   
       // --- JavaScript Libraries ---
-      if (typeof window.jQuery !== 'undefined' || scripts.some(src => src.includes('jquery'))) {
+      if (typeof (window as any).jQuery !== 'undefined' || scripts.some(src => src.includes('jquery'))) {
         stack.push('jQuery');
       }
       if (scripts.some(src => src.includes('lodash'))) {
@@ -112,9 +118,10 @@
       return stack.length ? stack : ['Aucune stack détectée'];
     }
   
-    const detectedStack = detectFrameworks();
+    const detectedStack: string[] = detectFrameworks();
     console.log("[Kipik] Stack détectée:", detectedStack);
     console.log("[Kipik] Envoi des données de stack au content script");
-    window.postMessage({ type: 'STACK_DETECTED', stack: detectedStack }, '*');
+    const message: StackMessage = { type: 'STACK_DETECTED', stack: detectedStack };
+    window.postMessage(message, '*');
   })();
   

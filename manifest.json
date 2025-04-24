@@ -23,10 +23,10 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "detectors/detect-stack.js",
-        "detectors/detect-performance.js",
-        "detectors/detect-content.js",
-        "detectors/detect-advanced.js",
+        "dist/detectors/detect-stack.js",
+        "dist/detectors/detect-performance.js",
+        "dist/detectors/detect-content.js",
+        "dist/detectors/detect-advanced.js",
         "dist/styles.css",
         "assets/logo.png"
       ],
