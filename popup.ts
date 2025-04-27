@@ -33,7 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
         language: string | string[];
         fonts: string[];
     }
-    interface MetaTags { description?: string; keywords?: string; }
+    interface MetaTags {
+        description?: string;
+        keywords?: string;
+        og?: string;
+        twitter?: string;
+    }
     interface StorageInfo { cookies: unknown[]; localStorage: unknown[]; sessionStorage: unknown[]; }
     interface LinksInfo { internal: unknown[]; external: unknown[]; }
     interface AdvancedInfo { metaTags: MetaTags; storage: StorageInfo; links: LinksInfo; }
@@ -122,6 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h2>Meta Tags</h2>
                     <p><strong>Description:</strong> ${advanced.metaTags.description || 'Non définie'}</p>
                     <p><strong>Mots-clés:</strong> ${advanced.metaTags.keywords || 'Non définis'}</p>
+                    <p><strong>Open Graph:</strong> ${advanced.metaTags.og || 'Non détecté'}</p>
+                    <p><strong>Twitter cards:</strong> ${advanced.metaTags.twitter || 'Non détecté'}</p>
                 </div>
 
                 <div class="info-section">

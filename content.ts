@@ -2,8 +2,8 @@ console.log("[Kipik] content.js actif !");
 
 // Types pour les données et messages
 interface PerformanceInfo { loadTime: number; domContentLoaded: number; resourceCount: number; totalResourceSizeKB: number; }
-interface ContentInfo { language: string; fonts: string[]; images: string[]; videos: string[]; }
-interface MetaTags { description: string; keywords: string; viewport: string; robots: string; og: Record<string, unknown>; }
+interface ContentInfo { language: string; fonts: string[]; }
+interface MetaTags { description: string; keywords: string; robots: string; og: string; twitter: string }
 interface StorageInfo { cookies: unknown[]; localStorage: unknown[]; sessionStorage: unknown[]; }
 interface LinksInfo { internal: string[]; external: string[]; broken: string[]; }
 interface AdvancedInfo { metaTags: MetaTags; storage: StorageInfo; links: LinksInfo; }
@@ -19,17 +19,15 @@ let detectedStack: string[] = [];
 let performanceData: PerformanceInfo = { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 };
 let contentData: ContentInfo = {
     language: "unknown",
-    fonts: [],
-    images: [],
-    videos: []
+    fonts: []
 };
 let advancedData: AdvancedInfo = {
     metaTags: {
         description: "",
         keywords: "",
-        viewport: "",
         robots: "",
-        og: {}
+        og: "",
+        twitter: ""
     },
     storage: { cookies: [], localStorage: [], sessionStorage: [] },
     links: { internal: [], external: [], broken: [] }
@@ -89,9 +87,7 @@ window.addEventListener('message', (event: MessageEvent<DetectorMessage>): void 
         if (event.data.data && typeof event.data.data === 'object') {
             contentData = {
                 language: event.data.data.language || "unknown",
-                fonts: Array.isArray(event.data.data.fonts) ? event.data.data.fonts : [],
-                images: Array.isArray(event.data.data.images) ? event.data.data.images : [],
-                videos: Array.isArray(event.data.data.videos) ? event.data.data.videos : []
+                fonts: Array.isArray(event.data.data.fonts) ? event.data.data.fonts : []
             };
         }
         contentDetected = true;
@@ -103,9 +99,9 @@ window.addEventListener('message', (event: MessageEvent<DetectorMessage>): void 
                 metaTags: {
                     description: event.data.data.metaTags?.description || "",
                     keywords: event.data.data.metaTags?.keywords || "",
-                    viewport: event.data.data.metaTags?.viewport || "",
                     robots: event.data.data.metaTags?.robots || "",
-                    og: event.data.data.metaTags?.og || {}
+                    og: event.data.data.metaTags?.og || "",
+                    twitter: event.data.data.metaTags?.twitter || "",
                 },
                 storage: event.data.data.storage || { cookies: [], localStorage: [], sessionStorage: [] },
                 links: event.data.data.links || { internal: [], external: [], broken: [] }

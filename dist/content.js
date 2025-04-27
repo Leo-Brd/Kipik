@@ -4,17 +4,15 @@ let detectedStack = [];
 let performanceData = { loadTime: 0, domContentLoaded: 0, resourceCount: 0, totalResourceSizeKB: 0 };
 let contentData = {
     language: "unknown",
-    fonts: [],
-    images: [],
-    videos: []
+    fonts: []
 };
 let advancedData = {
     metaTags: {
         description: "",
         keywords: "",
-        viewport: "",
         robots: "",
-        og: {}
+        og: "",
+        twitter: ""
     },
     storage: { cookies: [], localStorage: [], sessionStorage: [] },
     links: { internal: [], external: [], broken: [] }
@@ -68,9 +66,7 @@ window.addEventListener('message', (event) => {
         if (event.data.data && typeof event.data.data === 'object') {
             contentData = {
                 language: event.data.data.language || "unknown",
-                fonts: Array.isArray(event.data.data.fonts) ? event.data.data.fonts : [],
-                images: Array.isArray(event.data.data.images) ? event.data.data.images : [],
-                videos: Array.isArray(event.data.data.videos) ? event.data.data.videos : []
+                fonts: Array.isArray(event.data.data.fonts) ? event.data.data.fonts : []
             };
         }
         contentDetected = true;
@@ -81,9 +77,9 @@ window.addEventListener('message', (event) => {
                 metaTags: {
                     description: ((_a = event.data.data.metaTags) === null || _a === void 0 ? void 0 : _a.description) || "",
                     keywords: ((_b = event.data.data.metaTags) === null || _b === void 0 ? void 0 : _b.keywords) || "",
-                    viewport: ((_c = event.data.data.metaTags) === null || _c === void 0 ? void 0 : _c.viewport) || "",
-                    robots: ((_d = event.data.data.metaTags) === null || _d === void 0 ? void 0 : _d.robots) || "",
-                    og: ((_e = event.data.data.metaTags) === null || _e === void 0 ? void 0 : _e.og) || {}
+                    robots: ((_c = event.data.data.metaTags) === null || _c === void 0 ? void 0 : _c.robots) || "",
+                    og: ((_d = event.data.data.metaTags) === null || _d === void 0 ? void 0 : _d.og) || "",
+                    twitter: ((_e = event.data.data.metaTags) === null || _e === void 0 ? void 0 : _e.twitter) || "",
                 },
                 storage: event.data.data.storage || { cookies: [], localStorage: [], sessionStorage: [] },
                 links: event.data.data.links || { internal: [], external: [], broken: [] }

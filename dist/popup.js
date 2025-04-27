@@ -86,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h2>Meta Tags</h2>
                     <p><strong>Description:</strong> ${advanced.metaTags.description || 'Non définie'}</p>
                     <p><strong>Mots-clés:</strong> ${advanced.metaTags.keywords || 'Non définis'}</p>
+                    <p><strong>Open Graph:</strong> ${advanced.metaTags.og || 'Non détecté'}</p>
+                    <p><strong>Twitter cards:</strong> ${advanced.metaTags.twitter || 'Non détecté'}</p>
                 </div>
 
                 <div class="info-section">
