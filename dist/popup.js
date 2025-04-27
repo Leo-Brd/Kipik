@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div class="info-section">
-                    <h2>Stack technique</h2>
+                    <h2>Stacks détectées</h2>
                     <div class="tech-stack">
                         ${stack.map((tech) => `
                             <div class="tech-item">
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div class="info-section">
-                    <h2>Performance</h2>
+                    <h2>Aperçu des performances</h2>
                     <p><strong>Temps de chargement:</strong> ${performance.loadTime}ms</p>
                     <p><strong>DOM Content Loaded:</strong> ${performance.domContentLoaded}ms</p>
                     <p><strong>Nombre de ressources:</strong> ${performance.resourceCount}</p>
@@ -89,14 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div class="info-section">
-                    <h2>Stockage</h2>
+                    <h2>Stockage utilisé</h2>
                     <p><strong>🍪 Cookies:</strong> ${advanced.storage.cookies.length}</p>
                     <p><strong>🔗 Local Storage:</strong> ${advanced.storage.localStorage.length}</p>
                     <p><strong>🔑 Session Storage:</strong> ${advanced.storage.sessionStorage.length}</p>
                 </div>
 
                 <div class="info-section">
-                    <h2>Liens</h2>
+                    <h2>Ratio des liens</h2>
                     <div class="chart-container">
                         <canvas id="linksChart" width="200" height="200"></canvas>
                     </div>
