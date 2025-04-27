@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 console.log('=== INITIALISATION POPUP.JS ===');
 console.log('DOM Content Loaded ?', document.readyState);
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,11 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return `fi fi-${country}`;
     }
     // Gestion du bouton d'analyse standard
-    loadButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+    loadButton.addEventListener('click', async () => {
         console.log('Bouton d\'analyse standard cliqué');
         loadButton.disabled = true;
         loadButton.innerHTML = '<img src="assets/sablier.png" alt="Logo sablier" class="button-icon" /> Analyse en cours...';
-        const [tab] = (yield chrome.tabs.query({ active: true, currentWindow: true }));
+        const [tab] = (await chrome.tabs.query({ active: true, currentWindow: true }));
         chrome.tabs.sendMessage(tab.id, { type: "GET_PAGE_INFO" }, (response) => {
             if (chrome.runtime.lastError) {
                 siteInfo.innerHTML = `
@@ -127,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Filtrer les polices système
                 const customFonts = content.fonts.filter((font) => systemFonts.indexOf(font.toLowerCase()) === -1);
                 // Fonction pour vérifier et afficher une police
-                const checkAndDisplayFont = (font) => __awaiter(void 0, void 0, void 0, function* () {
+                const checkAndDisplayFont = async (font) => {
                     const fontName = font.replace(/\s+/g, '+');
                     const fontUrl = `https://fonts.googleapis.com/css2?family=${fontName}:wght@400&display=swap`;
                     // Vérifier si c'est une police CSS par défaut
@@ -142,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                     }
                     try {
-                        const response = yield fetch(fontUrl);
+                        const response = await fetch(fontUrl);
                         if (response.ok) {
                             // Charger la police depuis Google Fonts
                             const linkElement = document.createElement('link');
@@ -168,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="font-name">${font}</span>
                         </li>
                     `;
-                });
+                };
                 // Vérifier et afficher toutes les polices
                 const fontPromises = customFonts.map(checkAndDisplayFont);
                 Promise.all(fontPromises).then(fontElements => {
@@ -197,9 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
             loadButton.disabled = false;
             loadButton.innerHTML = '<img src="assets/refresh.png" alt="Logo Refresh" class="button-icon" /> Analyser à nouveau';
         });
-    }));
+    });
     // Gestion du bouton PageSpeed
-    analyzeButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+    analyzeButton.addEventListener('click', async () => {
         console.log('=== DÉBUT ANALYSE PAGESPEED ===');
         console.log('Bouton trouvé:', !!analyzeButton);
         console.log('Bouton cliqué !');
@@ -210,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsDiv.style.display = 'none';
             // Récupérer l'URL actuelle
             console.log('Récupération de l\'onglet actif...');
-            const [tab] = yield chrome.tabs.query({ active: true, currentWindow: true });
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
             console.log('Onglet actif:', tab);
             if (!tab) {
                 throw new Error('Aucun onglet actif trouvé');
@@ -219,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('URL à analyser:', url);
             // Récupérer la clé API
             console.log('Récupération de la clé API...');
-            const apiKey = yield new Promise((resolve, reject) => {
+            const apiKey = await new Promise((resolve, reject) => {
                 chrome.storage.local.get(['apiKey'], (result) => {
                     if (chrome.runtime.lastError) {
                         reject(chrome.runtime.lastError);
@@ -240,24 +231,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 url: url,
                 apiKey: apiKey
             }, (response) => {
-                console.log('Réponse reçue du background script:', response);
                 if (chrome.runtime.lastError) {
-                    console.error('Erreur Chrome:', chrome.runtime.lastError);
                     throw new Error(chrome.runtime.lastError.message);
                 }
                 if (response.error) {
-                    console.error('Erreur de l\'API:', response.error);
                     throw new Error(response.error);
                 }
-                const { performance, accessibility, seo, bestPractices } = response;
-                console.log('Scores reçus:', { performance, accessibility, seo, bestPractices });
-                toggleContent(resultsDiv, siteInfo);
-                // Afficher les résultats
-                document.getElementById('performanceScore').textContent = `${performance}/100`;
-                document.getElementById('accessibilityScore').textContent = `${accessibility}/100`;
-                document.getElementById('seoScore').textContent = `${seo}/100`;
-                document.getElementById('bestPracticesScore').textContent = `${bestPractices}/100`;
-                // Appliquer des couleurs
+                const { performance, accessibility, seo, bestPractices, metrics } = response;
+                console.log('Métriques reçues:', metrics);
+                // Afficher d'abord les scores principaux
                 const scores = [
                     { element: document.getElementById('performanceScore'), value: performance },
                     { element: document.getElementById('accessibilityScore'), value: accessibility },
@@ -265,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { element: document.getElementById('bestPracticesScore'), value: bestPractices }
                 ];
                 scores.forEach(({ element, value }) => {
+                    element.textContent = `${value}/100`;
                     if (value >= 90) {
                         element.style.color = '#10B981';
                     }
@@ -275,9 +258,27 @@ document.addEventListener('DOMContentLoaded', () => {
                         element.style.color = '#EF4444';
                     }
                 });
-                resultsDiv.style.display = 'grid';
+                // Afficher les métriques
+                const fcpElement = document.getElementById('fcp');
+                const lcpElement = document.getElementById('lcp');
+                const ttiElement = document.getElementById('tti');
+                const tbtElement = document.getElementById('tbt');
+                const clsElement = document.getElementById('cls');
+                if (fcpElement)
+                    fcpElement.textContent = metrics.firstContentfulPaint;
+                if (lcpElement)
+                    lcpElement.textContent = metrics.largestContentfulPaint;
+                if (ttiElement)
+                    ttiElement.textContent = metrics.timeToInteractive;
+                if (tbtElement)
+                    tbtElement.textContent = metrics.totalBlockingTime;
+                if (clsElement)
+                    clsElement.textContent = metrics.cumulativeLayoutShift;
+                // Maintenant, basculer l'affichage
+                toggleContent(resultsDiv, siteInfo);
+                // Réinitialiser le bouton
                 analyzeButton.disabled = false;
-                analyzeButton.innerHTML = '<span class="button-icon">📊</span> Analyser avec PageSpeed';
+                analyzeButton.innerHTML = '<img src="assets/refresh.png" alt="Logo Refresh" class="button-icon" /> Analyser avec PageSpeed';
             });
         }
         catch (error) {
@@ -287,8 +288,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <strong>Erreur:</strong> ${error.message}
                 </div>
             `;
+            // Réinitialiser le bouton en cas d'erreur
             analyzeButton.disabled = false;
-            analyzeButton.innerHTML = '<span class="button-icon">📊</span> Analyser avec PageSpeed';
+            analyzeButton.innerHTML = '<img src="assets/refresh.png" alt="Logo Refresh" class="button-icon" /> Analyser avec PageSpeed';
         }
-    }));
+    });
 });

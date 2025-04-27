@@ -39,12 +39,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         apiUrl.searchParams.append('category', 'accessibility');
         apiUrl.searchParams.append('category', 'seo');
         apiUrl.searchParams.append('category', 'best-practices');
-        apiUrl.searchParams.set('fields', 'lighthouseResult.categories');
+        apiUrl.searchParams.set('fields', 'lighthouseResult.categories,lighthouseResult.audits');
         fetch(apiUrl)
             .then((response) => response.json())
             .then((data) => {
-            var _a, _b, _c, _d;
-            console.log('Données brutes reçues de PageSpeed :', JSON.stringify(data, null, 2));
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
             if (!data.lighthouseResult || !data.lighthouseResult.categories) {
                 throw new Error('Format de réponse invalide de l\'API PageSpeed');
             }
@@ -52,11 +51,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             const accessibility = Math.round((((_b = data.lighthouseResult.categories.accessibility) === null || _b === void 0 ? void 0 : _b.score) || 0) * 100);
             const seo = Math.round((((_c = data.lighthouseResult.categories.seo) === null || _c === void 0 ? void 0 : _c.score) || 0) * 100);
             const bestPractices = Math.round((((_d = data.lighthouseResult.categories['best-practices']) === null || _d === void 0 ? void 0 : _d.score) || 0) * 100);
+            const metrics = {
+                firstContentfulPaint: ((_e = data.lighthouseResult.audits['first-contentful-paint']) === null || _e === void 0 ? void 0 : _e.displayValue) || 'N/A',
+                largestContentfulPaint: ((_f = data.lighthouseResult.audits['largest-contentful-paint']) === null || _f === void 0 ? void 0 : _f.displayValue) || 'N/A',
+                timeToInteractive: ((_g = data.lighthouseResult.audits['interactive']) === null || _g === void 0 ? void 0 : _g.displayValue) || 'N/A',
+                totalBlockingTime: ((_h = data.lighthouseResult.audits['total-blocking-time']) === null || _h === void 0 ? void 0 : _h.displayValue) || 'N/A',
+                cumulativeLayoutShift: ((_j = data.lighthouseResult.audits['cumulative-layout-shift']) === null || _j === void 0 ? void 0 : _j.displayValue) || 'N/A'
+            };
+            console.log('Métriques extraites:', metrics);
             sendResponse({
                 performance,
                 accessibility,
                 seo,
-                bestPractices
+                bestPractices,
+                metrics
             });
         })
             .catch(error => {

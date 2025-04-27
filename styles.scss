@@ -291,10 +291,15 @@ html, body#kipik-popup {
 
 // Résultats PageSpeed
 .results {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+
+    .pageSpeedScores {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
 }
 
 .score-card {
@@ -357,4 +362,52 @@ html, body#kipik-popup {
     vertical-align: middle;
     line-height: 1;
     font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.metrics-section {
+    margin-top: 20px;
+    width: 100%;
+
+    h3 {
+        color: $primary-color;
+        font-size: 1.35rem;
+        margin-bottom: 1.05rem;
+        padding-bottom: 0.55rem;
+        border-bottom: 2px solid $border-color;
+    }
+
+    .metrics-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-top: 15px;
+        width: 100%;
+
+        .metric-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px $shadow-color;
+            text-align: center;
+            transition: transform 0.3s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+            }
+
+            .metric-label {
+                display: block;
+                font-size: 14px;
+                color: $secondary-color;
+                margin-bottom: 10px;
+            }
+
+            .metric-value {
+                display: block;
+                font-size: 24px;
+                font-weight: bold;
+                color: $text-color;
+            }
+        }
+    }
 }

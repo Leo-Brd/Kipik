@@ -18,6 +18,21 @@ interface PageSpeedScores {
     accessibility: number;
     seo: number;
     bestPractices: number;
+    metrics: {
+        firstContentfulPaint: string;
+        largestContentfulPaint: string;
+        timeToInteractive: string;
+        totalBlockingTime: string;
+        cumulativeLayoutShift: string;
+    };
+}
+
+interface Audit {
+    id: string;
+    title: string;
+    description: string;
+    score: number | null;
+    displayValue?: string;
 }
 
 interface PageSpeedApiResponse {
@@ -27,6 +42,14 @@ interface PageSpeedApiResponse {
             accessibility?: { score: number };
             seo?: { score: number };
             'best-practices'?: { score: number };
+        };
+        audits: {
+            [key: string]: Audit;
+        };
+        runWarnings: string[];
+        configSettings: {
+            formFactor: string;
+            locale: string;
         };
     };
 }
@@ -75,12 +98,11 @@ chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.M
         apiUrl.searchParams.append('category', 'accessibility');
         apiUrl.searchParams.append('category', 'seo');
         apiUrl.searchParams.append('category', 'best-practices');
-        apiUrl.searchParams.set('fields', 'lighthouseResult.categories');
+        apiUrl.searchParams.set('fields', 'lighthouseResult.categories,lighthouseResult.audits');
 
         fetch(apiUrl)
             .then((response) => response.json())
             .then((data: PageSpeedApiResponse) => {
-                console.log('Données brutes reçues de PageSpeed :', JSON.stringify(data, null, 2));
                 if (!data.lighthouseResult || !data.lighthouseResult.categories) {
                     throw new Error('Format de réponse invalide de l\'API PageSpeed');
                 }
@@ -90,11 +112,22 @@ chrome.runtime.onMessage.addListener((message: Message, sender: chrome.runtime.M
                 const seo = Math.round((data.lighthouseResult.categories.seo?.score || 0) * 100);
                 const bestPractices = Math.round((data.lighthouseResult.categories['best-practices']?.score || 0) * 100);
 
+                const metrics = {
+                    firstContentfulPaint: data.lighthouseResult.audits['first-contentful-paint']?.displayValue || 'N/A',
+                    largestContentfulPaint: data.lighthouseResult.audits['largest-contentful-paint']?.displayValue || 'N/A',
+                    timeToInteractive: data.lighthouseResult.audits['interactive']?.displayValue || 'N/A',
+                    totalBlockingTime: data.lighthouseResult.audits['total-blocking-time']?.displayValue || 'N/A',
+                    cumulativeLayoutShift: data.lighthouseResult.audits['cumulative-layout-shift']?.displayValue || 'N/A'
+                };
+
+                console.log('Métriques extraites:', metrics);
+
                 sendResponse({
                     performance,
                     accessibility,
                     seo,
-                    bestPractices
+                    bestPractices,
+                    metrics
                 });
             })
             .catch(error => {

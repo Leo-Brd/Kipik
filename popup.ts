@@ -287,30 +287,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 url: url,
                 apiKey: apiKey
             }, (response) => {
-                console.log('Réponse reçue du background script:', response);
-                
                 if (chrome.runtime.lastError) {
-                    console.error('Erreur Chrome:', chrome.runtime.lastError);
                     throw new Error(chrome.runtime.lastError.message);
                 }
 
                 if (response.error) {
-                    console.error('Erreur de l\'API:', response.error);
                     throw new Error(response.error);
                 }
 
-                const { performance, accessibility, seo, bestPractices } = response;
-                console.log('Scores reçus:', { performance, accessibility, seo, bestPractices });
+                const { performance, accessibility, seo, bestPractices, metrics } = response;
+                console.log('Métriques reçues:', metrics);
 
-                toggleContent(resultsDiv, siteInfo);
-
-                // Afficher les résultats
-                document.getElementById('performanceScore')!.textContent = `${performance}/100`;
-                document.getElementById('accessibilityScore')!.textContent = `${accessibility}/100`;
-                document.getElementById('seoScore')!.textContent = `${seo}/100`;
-                document.getElementById('bestPracticesScore')!.textContent = `${bestPractices}/100`;
-
-                // Appliquer des couleurs
+                // Afficher d'abord les scores principaux
                 const scores = [
                     { element: document.getElementById('performanceScore')!, value: performance },
                     { element: document.getElementById('accessibilityScore')!, value: accessibility },
@@ -319,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ];
 
                 scores.forEach(({ element, value }) => {
+                    element.textContent = `${value}/100`;
                     if (value >= 90) {
                         element.style.color = '#10B981';
                     } else if (value >= 50) {
@@ -328,9 +317,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                resultsDiv.style.display = 'grid';
+                // Afficher les métriques
+                const fcpElement = document.getElementById('fcp');
+                const lcpElement = document.getElementById('lcp');
+                const ttiElement = document.getElementById('tti');
+                const tbtElement = document.getElementById('tbt');
+                const clsElement = document.getElementById('cls');
+
+                if (fcpElement) fcpElement.textContent = metrics.firstContentfulPaint;
+                if (lcpElement) lcpElement.textContent = metrics.largestContentfulPaint;
+                if (ttiElement) ttiElement.textContent = metrics.timeToInteractive;
+                if (tbtElement) tbtElement.textContent = metrics.totalBlockingTime;
+                if (clsElement) clsElement.textContent = metrics.cumulativeLayoutShift;
+
+                // Maintenant, basculer l'affichage
+                toggleContent(resultsDiv, siteInfo);
+
+                // Réinitialiser le bouton
                 analyzeButton.disabled = false;
-                analyzeButton.innerHTML = '<span class="button-icon">📊</span> Analyser avec PageSpeed';
+                analyzeButton.innerHTML = '<img src="assets/refresh.png" alt="Logo Refresh" class="button-icon" /> Analyser avec PageSpeed';
             });
 
         } catch (error: any) {
@@ -340,8 +345,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <strong>Erreur:</strong> ${error.message}
                 </div>
             `;
+            // Réinitialiser le bouton en cas d'erreur
             analyzeButton.disabled = false;
-            analyzeButton.innerHTML = '<span class="button-icon">📊</span> Analyser avec PageSpeed';
+            analyzeButton.innerHTML = '<img src="assets/refresh.png" alt="Logo Refresh" class="button-icon" /> Analyser avec PageSpeed';
         }
     });
 });

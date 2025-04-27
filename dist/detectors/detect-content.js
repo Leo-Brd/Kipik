@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 console.log("[Kipik] Détecteur de contenu actif");
 (function () {
     function detectAvailableLanguages() {
@@ -106,9 +97,9 @@ console.log("[Kipik] Détecteur de contenu actif");
         }
     }
     // Envoi des données après détection asynchrone
-    (() => __awaiter(this, void 0, void 0, function* () {
+    (async () => {
         try {
-            const languages = yield detectAvailableLanguages();
+            const languages = await detectAvailableLanguages();
             const fonts = detectFonts();
             const contentData = { language: languages, fonts: fonts };
             console.log("[Kipik] Données de contenu collectées:", contentData);
@@ -120,5 +111,5 @@ console.log("[Kipik] Détecteur de contenu actif");
             const fallback = { type: 'CONTENT_DATA', data: { language: [], fonts: [] } };
             window.postMessage(fallback, '*');
         }
-    }))();
+    })();
 })();

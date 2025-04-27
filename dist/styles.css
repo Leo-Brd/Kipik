@@ -251,6 +251,10 @@ html, body#kipik-popup {
 }
 
 .results {
+  display: flex;
+  flex-direction: column;
+}
+.results .pageSpeedScores {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
@@ -310,6 +314,48 @@ html, body#kipik-popup {
   vertical-align: middle;
   line-height: 1;
   font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.metrics-section {
+  margin-top: 20px;
+  width: 100%;
+}
+.metrics-section h3 {
+  color: #4a6bff;
+  font-size: 1.35rem;
+  margin-bottom: 1.05rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 2px solid #e9ecef;
+}
+.metrics-section .metrics-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 15px;
+  width: 100%;
+}
+.metrics-section .metrics-container .metric-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+.metrics-section .metrics-container .metric-card:hover {
+  transform: translateY(-2px);
+}
+.metrics-section .metrics-container .metric-card .metric-label {
+  display: block;
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 10px;
+}
+.metrics-section .metrics-container .metric-card .metric-value {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
 }
 
 /*# sourceMappingURL=styles.css.map */
